@@ -1,0 +1,14 @@
+# Maven 构建输出
+target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code（如果你偶尔用它）
+.vscode/
+
+# macOS 系统文件
+.DS_Store
