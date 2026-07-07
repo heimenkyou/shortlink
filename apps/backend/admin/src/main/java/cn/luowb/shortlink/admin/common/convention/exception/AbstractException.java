@@ -1,7 +1,7 @@
-package cn.luowb.shortlink.admin.convention.exception;
+package cn.luowb.shortlink.admin.common.convention.exception;
 
-import cn.luowb.shortlink.admin.convention.ServiceException;
-import cn.luowb.shortlink.admin.convention.result.errorcode.IErrorCode;
+import cn.luowb.shortlink.admin.common.convention.ServiceException;
+import cn.luowb.shortlink.admin.common.convention.result.errorcode.IErrorCode;
 import lombok.Getter;
 import org.springframework.util.StringUtils;
 

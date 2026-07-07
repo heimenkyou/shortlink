@@ -1,8 +1,8 @@
-package cn.luowb.shortlink.admin.convention.exception;
+package cn.luowb.shortlink.admin.common.convention.exception;
 
 
-import cn.luowb.shortlink.admin.convention.result.errorcode.BaseErrorCode;
-import cn.luowb.shortlink.admin.convention.result.errorcode.IErrorCode;
+import cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseErrorCode;
+import cn.luowb.shortlink.admin.common.convention.result.errorcode.IErrorCode;
 
 /**
  * 客户端异常

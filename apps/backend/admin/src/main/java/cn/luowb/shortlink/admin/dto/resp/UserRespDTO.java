@@ -1,5 +1,7 @@
 package cn.luowb.shortlink.admin.dto.resp;
 
+import cn.luowb.shortlink.admin.common.serialize.PhoneDesensitizationSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -33,6 +35,7 @@ public class UserRespDTO {
      * 手机号(加密)
      */
     @Schema(description = "手机号(加密)")
+    @JsonSerialize(using = PhoneDesensitizationSerializer.class)
     private String phone;
 
     /**

@@ -1,7 +1,7 @@
 package cn.luowb.shortlink.admin.controller;
 
-import cn.luowb.shortlink.admin.convention.result.Result;
-import cn.luowb.shortlink.admin.convention.result.Results;
+import cn.luowb.shortlink.admin.common.convention.result.Result;
+import cn.luowb.shortlink.admin.common.convention.result.Results;
 import cn.luowb.shortlink.admin.dto.resp.UserRespDTO;
 import cn.luowb.shortlink.admin.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;

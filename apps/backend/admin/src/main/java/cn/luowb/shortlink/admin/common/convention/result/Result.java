@@ -1,4 +1,4 @@
-package cn.luowb.shortlink.admin.convention.result;
+package cn.luowb.shortlink.admin.common.convention.result;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

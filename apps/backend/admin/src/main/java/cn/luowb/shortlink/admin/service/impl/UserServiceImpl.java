@@ -1,7 +1,7 @@
 package cn.luowb.shortlink.admin.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.luowb.shortlink.admin.convention.exception.ClientException;
+import cn.luowb.shortlink.admin.common.convention.exception.ClientException;
 import cn.luowb.shortlink.admin.dao.entity.UserDO;
 import cn.luowb.shortlink.admin.dao.mapper.UserMapper;
 import cn.luowb.shortlink.admin.dto.resp.UserRespDTO;
