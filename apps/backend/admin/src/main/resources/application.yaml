@@ -1,2 +1,59 @@
 server:
   port: 8002
+
+spring:
+  profiles:
+    active: prod
+  application:
+    name: shortlink
+  datasource:
+    url: jdbc:mysql://${app.mysql.host}:${app.mysql.port:3306}/${app.mysql.database:link}?serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true&useUnicode=true&characterEncoding=utf-8
+    username: ${app.mysql.username}
+    password: ${app.mysql.password}
+    driver-class-name: ${app.mysql.driver-class-name}
+    hikari:
+      connection-test-query: select 1
+      connection-timeout: 20000
+      idle-timeout: 300000
+      maximum-pool-size: 5
+      minimum-idle: 5
+  web:
+    resources:
+      add-mappings: false # 禁止默认的静态资源映射
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 500MB
+
+mybatis-plus:
+  mapper-locations: classpath:*/mapper/*.xml  #指定sql映射文件
+  configuration:
+    map-underscore-to-camel-case: true # 开启驼峰命名
+
+springdoc:
+  # 默认展开参数
+  default-flat-param-object: true
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'default'
+      paths-to-match: '/**'
+      packages-to-scan: cn.luowb.shortlink.admin
+
+app:
+  mysql:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: ${DATABASE_HOST:127.0.0.1}
+    port: ${DATABASE_PORT:3306}
+    database: ${DATABASE_NAME:app}
+    username: ${DATABASE_USERNAME:}
+    password: ${DATABASE_PASSWORD:}
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:2}

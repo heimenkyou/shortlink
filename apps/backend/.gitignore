@@ -16,3 +16,6 @@ replay_pid*
 # VisualVM / Profiler Profiling Data
 # ====================================================================
 .attach_pid*
+
+
+application-dev.yaml
