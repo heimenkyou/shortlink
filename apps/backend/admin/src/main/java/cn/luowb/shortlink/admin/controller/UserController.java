@@ -31,7 +31,7 @@ public class UserController {
      * @return 用户信息
      */
     @Operation(summary = "根据用户名查询用户")
-    @GetMapping("/api/shortlink/v1/user/{username}")
+    @GetMapping("/api/short-link/v1/user/{username}")
     public Result<UserRespDTO> getUserByUsername(@PathVariable String username) {
         return Results.success(userService.getUserByUsername(username));
     }
@@ -43,7 +43,7 @@ public class UserController {
      * @return 注册结果
      */
     @Operation(summary = "用户注册")
-    @PostMapping("/api/shortlink/v1/user")
+    @PostMapping("/api/short-link/v1/user")
     public Result<Void> register(@RequestBody UserRegisterDTO requestParam) {
         userService.register(requestParam);
         return Results.success();
@@ -57,7 +57,7 @@ public class UserController {
      */
     @Operation(summary = "检查用户名是否存在")
     @Tag(name = "用户管理", description = "用户查询相关接口")
-    @GetMapping("/api/shortlink/v1/user/has-username")
+    @GetMapping("/api/short-link/v1/user/has-username")
     public Result<Boolean> hasUserName(@RequestParam String username) {
         return Results.success(userService.hasUserName(username));
     }
