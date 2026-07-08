@@ -3,6 +3,7 @@ package cn.luowb.shortlink.admin.controller;
 import cn.luowb.shortlink.admin.common.convention.result.Result;
 import cn.luowb.shortlink.admin.common.convention.result.Results;
 import cn.luowb.shortlink.admin.dto.req.UserRegisterDTO;
+import cn.luowb.shortlink.admin.dto.req.UserUpdateReqDTO;
 import cn.luowb.shortlink.admin.dto.resp.UserRespDTO;
 import cn.luowb.shortlink.admin.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,4 +54,15 @@ public class UserController {
     public Result<Boolean> hasUserName(@RequestParam String username) {
         return Results.success(userService.hasUserName(username));
     }
+
+    /**
+     * 修改用户信息
+     */
+    @Operation(summary = "修改用户信息")
+    @PutMapping("/api/short-link/v1/user")
+    public Result<Void> update(@RequestBody UserUpdateReqDTO requestParam) {
+        userService.update(requestParam);
+        return Results.success();
+    }
+
 }

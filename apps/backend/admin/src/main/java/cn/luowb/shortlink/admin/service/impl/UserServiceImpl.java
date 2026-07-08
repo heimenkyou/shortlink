@@ -6,6 +6,7 @@ import cn.luowb.shortlink.admin.common.convention.exception.ClientException;
 import cn.luowb.shortlink.admin.dao.entity.UserDO;
 import cn.luowb.shortlink.admin.dao.mapper.UserMapper;
 import cn.luowb.shortlink.admin.dto.req.UserRegisterDTO;
+import cn.luowb.shortlink.admin.dto.req.UserUpdateReqDTO;
 import cn.luowb.shortlink.admin.dto.resp.UserRespDTO;
 import cn.luowb.shortlink.admin.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -42,9 +43,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                 .eq(UserDO::getUsername, username);
         UserDO userDO = this.getOne(wrapper);
         if (userDO == null) {
-            throw new ClientException("用户不存在");
+            throw new ClientException(USER_NAME_EXIST_ERROR);
         }
-        return BeanUtil.copyProperties(userDO, UserRespDTO.class);
+        return BeanUtil.toBean(userDO, UserRespDTO.class);
     }
 
     /**
@@ -60,7 +61,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             throw new ServiceException(USER_NAME_EXIST_ERROR);
         }
         try {
-            UserDO userDO = BeanUtil.copyProperties(requestParam, UserDO.class);
+            UserDO userDO = BeanUtil.toBean(requestParam, UserDO.class);
             userDO.setDelFlag(0);
             if (!this.save(userDO)) {
                 throw new ServiceException(USER_REGISTER_ERROR);
@@ -74,5 +75,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public Boolean hasUserName(String username) {
         return userRegisterCachePenetrationBloomFilter.contains(username);
+    }
+
+    @Override
+    public void update(UserUpdateReqDTO requestParam) {
+        // TODO 验证当前用户名是否为登录用户
+        LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
+                .eq(UserDO::getUsername, requestParam.getUsername());
+        this.update(BeanUtil.toBean(requestParam, UserDO.class), wrapper);
     }
 }

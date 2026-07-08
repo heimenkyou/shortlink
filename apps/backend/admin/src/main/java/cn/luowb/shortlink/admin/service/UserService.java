@@ -2,6 +2,7 @@ package cn.luowb.shortlink.admin.service;
 
 import cn.luowb.shortlink.admin.dao.entity.UserDO;
 import cn.luowb.shortlink.admin.dto.req.UserRegisterDTO;
+import cn.luowb.shortlink.admin.dto.req.UserUpdateReqDTO;
 import cn.luowb.shortlink.admin.dto.resp.UserRespDTO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -32,4 +33,11 @@ public interface UserService extends IService<UserDO> {
      * @return 是否存在
      */
     Boolean hasUserName(String username);
+
+    /**
+     * 根据用户名修改用户信息
+     *
+     * @param requestParam 修改请求参数
+     */
+    void update(UserUpdateReqDTO requestParam);
 }
