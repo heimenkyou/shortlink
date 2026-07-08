@@ -2,8 +2,10 @@ package cn.luowb.shortlink.admin.controller;
 
 import cn.luowb.shortlink.admin.common.convention.result.Result;
 import cn.luowb.shortlink.admin.common.convention.result.Results;
+import cn.luowb.shortlink.admin.dto.req.UserLoginReqDTO;
 import cn.luowb.shortlink.admin.dto.req.UserRegisterDTO;
 import cn.luowb.shortlink.admin.dto.req.UserUpdateReqDTO;
+import cn.luowb.shortlink.admin.dto.resp.UserLoginRespDTO;
 import cn.luowb.shortlink.admin.dto.resp.UserRespDTO;
 import cn.luowb.shortlink.admin.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,6 +65,15 @@ public class UserController {
     public Result<Void> update(@RequestBody UserUpdateReqDTO requestParam) {
         userService.update(requestParam);
         return Results.success();
+    }
+
+    /**
+     * 用户登录
+     */
+    @Operation(summary = "用户登录")
+    @PostMapping("/api/short-link/v1/user/login")
+    public Result<UserLoginRespDTO> login(@RequestBody UserLoginReqDTO requestParam) {
+        return Results.success(userService.login(requestParam));
     }
 
 }

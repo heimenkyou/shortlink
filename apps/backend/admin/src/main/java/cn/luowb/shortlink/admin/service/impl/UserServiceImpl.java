@@ -1,12 +1,17 @@
 package cn.luowb.shortlink.admin.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.crypto.digest.BCrypt;
+import cn.hutool.json.JSONUtil;
 import cn.luowb.shortlink.admin.common.convention.ServiceException;
 import cn.luowb.shortlink.admin.common.convention.exception.ClientException;
 import cn.luowb.shortlink.admin.dao.entity.UserDO;
 import cn.luowb.shortlink.admin.dao.mapper.UserMapper;
+import cn.luowb.shortlink.admin.dto.req.UserLoginReqDTO;
 import cn.luowb.shortlink.admin.dto.req.UserRegisterDTO;
 import cn.luowb.shortlink.admin.dto.req.UserUpdateReqDTO;
+import cn.luowb.shortlink.admin.dto.resp.UserLoginRespDTO;
 import cn.luowb.shortlink.admin.dto.resp.UserRespDTO;
 import cn.luowb.shortlink.admin.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -16,7 +21,10 @@ import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 import static cn.luowb.shortlink.admin.common.constant.RedisCacheKeyEnum.LOCK_USER_REGISTER_KEY;
 import static cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseErrorCode.USER_NAME_EXIST_ERROR;
@@ -30,6 +38,7 @@ import static cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseEr
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
     private final RedissonClient redissonClient;
+    private final StringRedisTemplate stringRedisTemplate;
 
     /**
      * 根据用户名查询用户信息
@@ -56,6 +65,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (hasUserName(requestParam.getUsername())) {
             throw new ClientException(USER_NAME_EXIST_ERROR);
         }
+        // 密码加密
+        requestParam.setPassword(BCrypt.hashpw(requestParam.getPassword()));
+        // 分布式锁防止重复注册
         RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY.getKey(requestParam.getUsername()));
         if (!lock.tryLock()) {
             throw new ServiceException(USER_NAME_EXIST_ERROR);
@@ -80,8 +92,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public void update(UserUpdateReqDTO requestParam) {
         // TODO 验证当前用户名是否为登录用户
+        // 密码加密
+        requestParam.setPassword(BCrypt.hashpw(requestParam.getPassword()));
         LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
                 .eq(UserDO::getUsername, requestParam.getUsername());
         this.update(BeanUtil.toBean(requestParam, UserDO.class), wrapper);
+    }
+
+    @Override
+    public UserLoginRespDTO login(UserLoginReqDTO requestParam) {
+        LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
+                .eq(UserDO::getUsername, requestParam.getUsername());
+        UserDO userDO = this.getOne(wrapper);
+        if (userDO == null) {
+            throw new ClientException("用户不存在");
+        }
+        if (!BCrypt.checkpw(requestParam.getPassword(), userDO.getPassword())) {
+            throw new ClientException("密码错误");
+        }
+        String token = UUID.randomUUID().toString(true);
+        stringRedisTemplate.opsForValue().set(token, JSONUtil.toJsonStr(userDO), 30, TimeUnit.MINUTES);
+        return new UserLoginRespDTO(token);
     }
 }
