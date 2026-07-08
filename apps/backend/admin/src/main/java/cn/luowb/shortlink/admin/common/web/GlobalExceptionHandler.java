@@ -1,5 +1,6 @@
 package cn.luowb.shortlink.admin.common.web;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.resource.NoResourceException;
 import cn.hutool.core.util.StrUtil;
@@ -68,6 +69,12 @@ public class GlobalExceptionHandler {
         // 针对 404 这种非逻辑错误的异常，只打一行 Warn，不打印堆栈
         log.warn("[404] 资源不存在: {} {}", request.getMethod(), request.getRequestURI());
         return Results.failure(BaseErrorCode.CLIENT_ERROR.code(), "资源不存在");
+    }
+
+    @ExceptionHandler(NotLoginException.class)
+    public Result<Void> handleNotLoginException(HttpServletRequest request, NotLoginException ex) {
+        log.info("[{}] {} 未登录异常: {}", request.getMethod(), getUrl(request), ex.getMessage(), ex);
+        return Results.failure(BaseErrorCode.CLIENT_ERROR.code(), "未登录");
     }
 
     private String getUrl(HttpServletRequest request) {
