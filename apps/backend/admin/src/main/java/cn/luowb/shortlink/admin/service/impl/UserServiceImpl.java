@@ -1,7 +1,7 @@
 package cn.luowb.shortlink.admin.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.BCrypt;
 import cn.luowb.shortlink.admin.common.convention.ServiceException;
 import cn.luowb.shortlink.admin.common.convention.exception.ClientException;
@@ -20,12 +20,9 @@ import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
-
-import static cn.luowb.shortlink.admin.common.constant.RedisCacheKeyEnum.*;
+import static cn.luowb.shortlink.admin.common.constant.RedisCacheKeyEnum.LOCK_USER_REGISTER_KEY;
 import static cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseErrorCode.USER_NAME_EXIST_ERROR;
 import static cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseErrorCode.USER_REGISTER_ERROR;
 
@@ -37,7 +34,6 @@ import static cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseEr
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
     private final RedissonClient redissonClient;
-    private final StringRedisTemplate stringRedisTemplate;
 
     /**
      * 根据用户名查询用户信息
@@ -90,12 +86,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public void update(UserUpdateReqDTO requestParam) {
-        // TODO 验证当前用户名是否为登录用户
+        // 保证当前用户为登录用户
+        String loginUserId = StpUtil.getLoginIdAsString();
+
         // 密码加密
         requestParam.setPassword(BCrypt.hashpw(requestParam.getPassword()));
         LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
-                .eq(UserDO::getUsername, requestParam.getUsername());
-        this.update(BeanUtil.toBean(requestParam, UserDO.class), wrapper);
+                .eq(UserDO::getUsername, requestParam.getUsername())
+                .eq(UserDO::getId, loginUserId);
+        if (!this.update(BeanUtil.toBean(requestParam, UserDO.class), wrapper)) {
+            throw new ClientException("更新失败");
+        }
     }
 
     @Override
@@ -110,23 +111,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             throw new ClientException("密码错误");
         }
 
-        Long userId = userDO.getId();
+        StpUtil.login(userDO.getId());
 
-        String oldToken = stringRedisTemplate.opsForValue().get(USER_SESSION_KEY.getKey(userId));
-        if (oldToken != null) {
-            stringRedisTemplate.delete(SESSION_USER_KEY.getKey(oldToken));
-        }
-
-        String newToken = UUID.randomUUID().toString(true);
-
-        stringRedisTemplate.opsForValue().set(SESSION_USER_KEY.getKey(newToken), userId.toString(), 7200, TimeUnit.SECONDS);
-        stringRedisTemplate.opsForValue().set(USER_SESSION_KEY.getKey(userId), newToken, 7200, TimeUnit.SECONDS);
-
-        return new UserLoginRespDTO(newToken);
+        String token = StpUtil.getTokenInfo().getTokenValue();
+        return new UserLoginRespDTO(token);
     }
 
     @Override
     public Boolean checkLogin(String token) {
-        return stringRedisTemplate.hasKey(SESSION_USER_KEY.getKey(token));
+        return StpUtil.getLoginIdByToken(token) != null;
     }
 }

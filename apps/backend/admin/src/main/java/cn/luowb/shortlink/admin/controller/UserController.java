@@ -1,5 +1,6 @@
 package cn.luowb.shortlink.admin.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.luowb.shortlink.admin.common.convention.result.Result;
 import cn.luowb.shortlink.admin.common.convention.result.Results;
 import cn.luowb.shortlink.admin.dto.req.UserLoginReqDTO;
@@ -33,6 +34,7 @@ public class UserController {
      */
     @Operation(summary = "根据用户名查询用户")
     @GetMapping("/api/short-link/v1/user/{username}")
+    @SaIgnore
     public Result<UserRespDTO> getUserByUsername(@PathVariable String username) {
         return Results.success(userService.getUserByUsername(username));
     }
