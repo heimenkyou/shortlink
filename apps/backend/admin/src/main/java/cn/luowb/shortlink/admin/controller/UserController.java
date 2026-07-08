@@ -26,9 +26,6 @@ public class UserController {
 
     /**
      * 根据用户名查询用户
-     *
-     * @param username 用户名
-     * @return 用户信息
      */
     @Operation(summary = "根据用户名查询用户")
     @GetMapping("/api/short-link/v1/user/{username}")
@@ -38,9 +35,6 @@ public class UserController {
 
     /**
      * 用户注册
-     *
-     * @param requestParam 注册请求参数
-     * @return 注册结果
      */
     @Operation(summary = "用户注册")
     @PostMapping("/api/short-link/v1/user")
@@ -51,9 +45,6 @@ public class UserController {
 
     /**
      * 检查用户名是否存在
-     *
-     * @param username 用户名
-     * @return 是否存在
      */
     @Operation(summary = "检查用户名是否存在")
     @Tag(name = "用户管理", description = "用户查询相关接口")

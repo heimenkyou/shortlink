@@ -13,7 +13,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBloomFilter;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+
+import static cn.luowb.shortlink.admin.common.constant.RedisCacheKeyEnum.LOCK_USER_REGISTER_KEY;
 
 /**
  * 用户服务实现
@@ -22,6 +26,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
+    private final RedissonClient redissonClient;
 
     /**
      * 根据用户名查询用户信息
@@ -32,42 +37,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public UserRespDTO getUserByUsername(String username) {
         LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
-                .eq(UserDO::getUsername, username)
-                .eq(UserDO::getDelFlag, 0);
+                .eq(UserDO::getUsername, username);
         UserDO userDO = this.getOne(wrapper);
         if (userDO == null) {
             throw new ClientException("用户不存在");
         }
-        // 直接复用同名字段拷贝，保持返回层与持久层解耦。
         return BeanUtil.copyProperties(userDO, UserRespDTO.class);
     }
 
     /**
-     * 用户注册时直接查库，避免布隆过滤器未回灌导致误判。
-     *
-     * @param requestParam 注册请求参数
+     * 用户注册
      */
     @Override
     public void register(UserRegisterDTO requestParam) {
-        LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
-                .eq(UserDO::getUsername, requestParam.getUsername())
-                .eq(UserDO::getDelFlag, 0);
-        if (this.exists(wrapper)) {
+        if (hasUserName(requestParam.getUsername())) {
             throw new ClientException("用户名已存在");
         }
-        UserDO userDO = BeanUtil.copyProperties(requestParam, UserDO.class);
-        userDO.setDelFlag(0);
-        if (!this.save(userDO)) {
-            throw new ServiceException("用户注册失败");
+        RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY.getKey(requestParam.getUsername()));
+        if (!lock.tryLock()) {
+            throw new ServiceException("用户名已存在");
         }
-        userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
+        try {
+            UserDO userDO = BeanUtil.copyProperties(requestParam, UserDO.class);
+            userDO.setDelFlag(0);
+            if (!this.save(userDO)) {
+                throw new ServiceException("用户注册失败");
+            }
+            userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
     public Boolean hasUserName(String username) {
         return userRegisterCachePenetrationBloomFilter.contains(username);
-//        LambdaQueryWrapper<UserDO> wrapper = Wrappers.lambdaQuery(UserDO.class)
-//                .eq(UserDO::getUsername, username);
-//        return this.exists(wrapper);
     }
 }
