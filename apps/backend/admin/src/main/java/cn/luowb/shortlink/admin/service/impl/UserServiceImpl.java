@@ -3,7 +3,6 @@ package cn.luowb.shortlink.admin.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.BCrypt;
-import cn.hutool.json.JSONUtil;
 import cn.luowb.shortlink.admin.common.convention.ServiceException;
 import cn.luowb.shortlink.admin.common.convention.exception.ClientException;
 import cn.luowb.shortlink.admin.dao.entity.UserDO;
@@ -26,7 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
-import static cn.luowb.shortlink.admin.common.constant.RedisCacheKeyEnum.LOCK_USER_REGISTER_KEY;
+import static cn.luowb.shortlink.admin.common.constant.RedisCacheKeyEnum.*;
 import static cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseErrorCode.USER_NAME_EXIST_ERROR;
 import static cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseErrorCode.USER_REGISTER_ERROR;
 
@@ -110,8 +109,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (!BCrypt.checkpw(requestParam.getPassword(), userDO.getPassword())) {
             throw new ClientException("密码错误");
         }
-        String token = UUID.randomUUID().toString(true);
-        stringRedisTemplate.opsForValue().set(token, JSONUtil.toJsonStr(userDO), 30, TimeUnit.MINUTES);
-        return new UserLoginRespDTO(token);
+
+        Long userId = userDO.getId();
+
+        String oldToken = stringRedisTemplate.opsForValue().get(USER_SESSION_KEY.getKey(userId));
+        if (oldToken != null) {
+            stringRedisTemplate.delete(SESSION_USER_KEY.getKey(oldToken));
+        }
+
+        String newToken = UUID.randomUUID().toString(true);
+
+        stringRedisTemplate.opsForValue().set(SESSION_USER_KEY.getKey(newToken), userId.toString(), 7200, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().set(USER_SESSION_KEY.getKey(userId), newToken, 7200, TimeUnit.SECONDS);
+
+        return new UserLoginRespDTO(newToken);
+    }
+
+    @Override
+    public Boolean checkLogin(String token) {
+        return stringRedisTemplate.hasKey(SESSION_USER_KEY.getKey(token));
     }
 }
