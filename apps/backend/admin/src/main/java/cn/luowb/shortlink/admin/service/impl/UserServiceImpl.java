@@ -18,6 +18,8 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import static cn.luowb.shortlink.admin.common.constant.RedisCacheKeyEnum.LOCK_USER_REGISTER_KEY;
+import static cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseErrorCode.USER_NAME_EXIST_ERROR;
+import static cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseErrorCode.USER_REGISTER_ERROR;
 
 /**
  * 用户服务实现
@@ -51,17 +53,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public void register(UserRegisterDTO requestParam) {
         if (hasUserName(requestParam.getUsername())) {
-            throw new ClientException("用户名已存在");
+            throw new ClientException(USER_NAME_EXIST_ERROR);
         }
         RLock lock = redissonClient.getLock(LOCK_USER_REGISTER_KEY.getKey(requestParam.getUsername()));
         if (!lock.tryLock()) {
-            throw new ServiceException("用户名已存在");
+            throw new ServiceException(USER_NAME_EXIST_ERROR);
         }
         try {
             UserDO userDO = BeanUtil.copyProperties(requestParam, UserDO.class);
             userDO.setDelFlag(0);
             if (!this.save(userDO)) {
-                throw new ServiceException("用户注册失败");
+                throw new ServiceException(USER_REGISTER_ERROR);
             }
             userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
         } finally {

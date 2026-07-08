@@ -7,10 +7,10 @@ spring:
   application:
     name: shortlink
   datasource:
-    url: jdbc:mysql://${app.mysql.host}:${app.mysql.port:3306}/${app.mysql.database:link}?serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true&useUnicode=true&characterEncoding=utf-8
-    username: ${app.mysql.username}
-    password: ${app.mysql.password}
-    driver-class-name: ${app.mysql.driver-class-name}
+    # ShardingSphere 对 Driver 自定义，实现分库分表等隐藏逻辑
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    # ShardingSphere 配置文件路径
+    url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
     hikari:
       connection-test-query: select 1
       connection-timeout: 20000
@@ -51,13 +51,6 @@ springdoc:
       packages-to-scan: cn.luowb.shortlink.admin
 
 app:
-  mysql:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    host: ${DATABASE_HOST:127.0.0.1}
-    port: ${DATABASE_PORT:3306}
-    database: ${DATABASE_NAME:app}
-    username: ${DATABASE_USERNAME:}
-    password: ${DATABASE_PASSWORD:}
   redis:
     host: ${REDIS_HOST:127.0.0.1}
     port: ${REDIS_PORT:6379}
