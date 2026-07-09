@@ -121,4 +121,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     public Boolean checkLogin(String token) {
         return StpUtil.getLoginIdByToken(token) != null;
     }
+
+    @Override
+    public void logout(String token) {
+        String loginUserId = StpUtil.getLoginIdByToken(token).toString();
+        if (loginUserId == null) {
+            throw new ClientException("用户未登录");
+        }
+        StpUtil.logout(loginUserId);
+    }
 }

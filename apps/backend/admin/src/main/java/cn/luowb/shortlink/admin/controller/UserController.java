@@ -87,4 +87,13 @@ public class UserController {
         return Results.success(userService.checkLogin(token));
     }
 
+    /**
+     * 用户退出登录
+     */
+    @Operation(summary = "用户退出登录")
+    @PostMapping("/api/short-link/v1/user/logout")
+    public Result<Void> logout(@RequestParam String token) {
+        userService.logout(token);
+        return Results.success();
+    }
 }
