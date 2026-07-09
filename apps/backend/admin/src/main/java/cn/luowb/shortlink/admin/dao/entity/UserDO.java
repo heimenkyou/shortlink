@@ -1,16 +1,17 @@
 package cn.luowb.shortlink.admin.dao.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
+import cn.luowb.shortlink.admin.dao.entity.base.BaseDO;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-
-import java.time.LocalDateTime;
 
 /**
  * 用户实体
  */
 @Data
 @TableName("t_user")
-public class UserDO {
+public class UserDO extends BaseDO {
     /**
      * 主键 ID
      */
@@ -46,21 +47,4 @@ public class UserDO {
      * 注销时间戳
      */
     private Long deletionTime;
-
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
-
-    /**
-     * 修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
-
-    /**
-     * 删除标识 0: 未删除 1: 已删除
-     */
-    private Integer delFlag;
 }
