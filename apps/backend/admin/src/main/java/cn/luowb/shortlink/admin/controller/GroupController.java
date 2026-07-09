@@ -3,6 +3,7 @@ package cn.luowb.shortlink.admin.controller;
 import cn.luowb.shortlink.admin.common.convention.result.Result;
 import cn.luowb.shortlink.admin.common.convention.result.Results;
 import cn.luowb.shortlink.admin.dto.req.GroupSaveReqDTO;
+import cn.luowb.shortlink.admin.dto.req.GroupSortReqDTO;
 import cn.luowb.shortlink.admin.dto.req.GroupUpdateReqDTO;
 import cn.luowb.shortlink.admin.dto.resp.GroupRespDTO;
 import cn.luowb.shortlink.admin.service.GroupService;
@@ -58,6 +59,16 @@ public class GroupController {
     @DeleteMapping("/api/short-link/v1/group/{gid}")
     public Result<Void> delete(@PathVariable String gid) {
         groupService.delete(gid);
+        return Results.success();
+    }
+
+    /**
+     * 短链接分组排序
+     */
+    @Operation(summary = "短链接分组排序")
+    @PutMapping("/api/short-link/v1/group/sort")
+    public Result<Void> sort(@RequestBody List<GroupSortReqDTO> requestParam) {
+        groupService.sort(requestParam);
         return Results.success();
     }
 }

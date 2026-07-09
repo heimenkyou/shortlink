@@ -1,6 +1,7 @@
 package cn.luowb.shortlink.admin.service;
 
 import cn.luowb.shortlink.admin.dao.entity.GroupDO;
+import cn.luowb.shortlink.admin.dto.req.GroupSortReqDTO;
 import cn.luowb.shortlink.admin.dto.req.GroupUpdateReqDTO;
 import cn.luowb.shortlink.admin.dto.resp.GroupRespDTO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -39,4 +40,11 @@ public interface GroupService extends IService<GroupDO> {
      * @param gid 分组标识
      */
     void delete(String gid);
+
+    /**
+     * 短链接分组排序
+     *
+     * @param requestParam 排序请求参数
+     */
+    void sort(List<GroupSortReqDTO> requestParam);
 }

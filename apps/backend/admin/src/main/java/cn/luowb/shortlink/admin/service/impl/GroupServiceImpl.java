@@ -6,6 +6,7 @@ import cn.luowb.shortlink.admin.common.biz.user.UserContext;
 import cn.luowb.shortlink.admin.common.convention.exception.ClientException;
 import cn.luowb.shortlink.admin.dao.entity.GroupDO;
 import cn.luowb.shortlink.admin.dao.mapper.GroupMapper;
+import cn.luowb.shortlink.admin.dto.req.GroupSortReqDTO;
 import cn.luowb.shortlink.admin.dto.req.GroupUpdateReqDTO;
 import cn.luowb.shortlink.admin.dto.resp.GroupRespDTO;
 import cn.luowb.shortlink.admin.service.GroupService;
@@ -101,5 +102,19 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
         if (!this.updateById(groupDO)) {
             throw new ClientException("分组删除失败");
         }
+    }
+
+    @Override
+    public void sort(List<GroupSortReqDTO> requestParam) {
+        requestParam.forEach(sortReqDTO -> {
+            GroupDO groupDO = GroupDO.builder()
+                    .sortOrder(sortReqDTO.getSortOrder())
+                    .build();
+            LambdaQueryWrapper<GroupDO> wrapper = Wrappers.lambdaQuery(GroupDO.class)
+                    .eq(GroupDO::getGid, sortReqDTO.getGid())
+                    .eq(GroupDO::getUsername, UserContext.getUsername())
+                    .eq(GroupDO::getDelFlag, 0);
+            this.update(groupDO, wrapper);
+        });
     }
 }
