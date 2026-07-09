@@ -3,6 +3,7 @@ package cn.luowb.shortlink.admin.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.digest.BCrypt;
+import cn.luowb.shortlink.admin.common.biz.user.UserContext;
 import cn.luowb.shortlink.admin.common.convention.ServiceException;
 import cn.luowb.shortlink.admin.common.convention.exception.ClientException;
 import cn.luowb.shortlink.admin.dao.entity.UserDO;
@@ -87,7 +88,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
     @Override
     public void update(UserUpdateReqDTO requestParam) {
         // 保证当前用户为登录用户
-        String loginUserId = StpUtil.getLoginIdAsString();
+        Long loginUserId = UserContext.getUserId();
 
         // 密码加密
         requestParam.setPassword(BCrypt.hashpw(requestParam.getPassword()));
@@ -111,7 +112,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             throw new ClientException("密码错误");
         }
 
-        StpUtil.login(userDO.getId());
+        // 用户名为分片键，所以使用用户名作为登录ID
+        StpUtil.login(userDO.getUsername());
 
         String token = StpUtil.getTokenInfo().getTokenValue();
         return new UserLoginRespDTO(token);
@@ -124,7 +126,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
     @Override
     public void logout(String token) {
-        String loginUserId = StpUtil.getLoginIdByToken(token).toString();
+        Object loginUserId = StpUtil.getLoginIdByToken(token);
         if (loginUserId == null) {
             throw new ClientException("用户未登录");
         }

@@ -2,7 +2,8 @@ package cn.luowb.shortlink.admin.common.biz.user;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.luowb.shortlink.admin.dao.entity.UserDO;
-import cn.luowb.shortlink.admin.service.UserService;
+import cn.luowb.shortlink.admin.dao.mapper.UserMapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +15,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @RequiredArgsConstructor
 public class UserContextInterceptor implements HandlerInterceptor {
 
-    private final UserService userService;
+    private final UserMapper userMapper;
 
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
-        Long userId = StpUtil.getLoginIdAsLong();
-
-        UserDO userDO = userService.getById(userId);
+        String username = StpUtil.getLoginIdAsString();
+        UserDO userDO = userMapper.selectOne(Wrappers.lambdaQuery(UserDO.class).eq(UserDO::getUsername, username));
         if (userDO != null) {
             UserInfoDTO userInfoDTO = UserInfoDTO.builder()
                     .id(userDO.getId())
