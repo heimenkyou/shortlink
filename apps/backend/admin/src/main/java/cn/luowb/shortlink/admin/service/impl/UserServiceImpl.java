@@ -70,7 +70,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         }
         try {
             UserDO userDO = BeanUtil.toBean(requestParam, UserDO.class);
-            userDO.setDelFlag(0);
             if (!this.save(userDO)) {
                 throw new ServiceException(USER_REGISTER_ERROR);
             }
