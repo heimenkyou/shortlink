@@ -1,4 +1,4 @@
-package cn.luowb.shortlink.admin.common.convention.result.errorcode;
+package cn.luowb.shortlink.common.convention.exception.result.errorcode;
 
 /**
  * 基础错误码定义

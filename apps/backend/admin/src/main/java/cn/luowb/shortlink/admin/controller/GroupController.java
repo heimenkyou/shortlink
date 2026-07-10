@@ -1,7 +1,7 @@
 package cn.luowb.shortlink.admin.controller;
 
-import cn.luowb.shortlink.admin.common.convention.result.Result;
-import cn.luowb.shortlink.admin.common.convention.result.Results;
+import cn.luowb.shortlink.common.convention.exception.result.Result;
+import cn.luowb.shortlink.common.convention.exception.result.Results;
 import cn.luowb.shortlink.admin.dto.req.GroupSaveReqDTO;
 import cn.luowb.shortlink.admin.dto.req.GroupSortReqDTO;
 import cn.luowb.shortlink.admin.dto.req.GroupUpdateReqDTO;

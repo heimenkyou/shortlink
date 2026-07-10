@@ -1,4 +1,4 @@
-package cn.luowb.shortlink.admin.dao.entity.base;
+package cn.luowb.shortlink.common.database;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;

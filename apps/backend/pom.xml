@@ -12,6 +12,7 @@
         <module>admin</module>
         <module>project</module>
         <module>gateway</module>
+        <module>common</module>
     </modules>
 
     <properties>
@@ -35,6 +36,7 @@
         <knife4j.version>4.5.0</knife4j.version>
         <spotless.version>2.46.1</spotless.version>
         <sa-token.version>1.45.0</sa-token.version>
+        <project.version>1.0-SNAPSHOT</project.version>
     </properties>
 
     <dependencies>
@@ -47,6 +49,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- common 模块 -->
+            <dependency>
+                <groupId>cn.luowb.shortlink</groupId>
+                <artifactId>shortlink-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>

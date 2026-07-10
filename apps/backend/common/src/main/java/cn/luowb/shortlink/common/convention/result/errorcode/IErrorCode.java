@@ -1,4 +1,4 @@
-package cn.luowb.shortlink.admin.common.convention.result.errorcode;
+package cn.luowb.shortlink.common.convention.result.errorcode;
 
 public interface IErrorCode {
     /**

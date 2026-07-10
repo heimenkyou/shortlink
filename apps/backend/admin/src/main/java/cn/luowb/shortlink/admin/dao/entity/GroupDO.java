@@ -1,6 +1,6 @@
 package cn.luowb.shortlink.admin.dao.entity;
 
-import cn.luowb.shortlink.admin.dao.entity.base.BaseDO;
+import cn.luowb.shortlink.common.database.BaseDO;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

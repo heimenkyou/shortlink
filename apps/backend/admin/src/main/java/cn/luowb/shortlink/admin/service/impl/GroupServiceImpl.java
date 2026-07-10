@@ -3,7 +3,7 @@ package cn.luowb.shortlink.admin.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.luowb.shortlink.admin.common.biz.user.UserContext;
-import cn.luowb.shortlink.admin.common.convention.exception.ClientException;
+import cn.luowb.shortlink.common.convention.exception.exception.ClientException;
 import cn.luowb.shortlink.admin.dao.entity.GroupDO;
 import cn.luowb.shortlink.admin.dao.mapper.GroupMapper;
 import cn.luowb.shortlink.admin.dto.req.GroupSortReqDTO;

@@ -67,5 +67,10 @@
             <artifactId>sa-token-redis-jackson</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>cn.luowb.shortlink</groupId>
+            <artifactId>shortlink-common</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

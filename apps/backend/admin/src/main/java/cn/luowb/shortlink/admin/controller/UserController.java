@@ -1,8 +1,8 @@
 package cn.luowb.shortlink.admin.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.luowb.shortlink.admin.common.convention.result.Result;
-import cn.luowb.shortlink.admin.common.convention.result.Results;
+import cn.luowb.shortlink.common.convention.exception.result.Result;
+import cn.luowb.shortlink.common.convention.exception.result.Results;
 import cn.luowb.shortlink.admin.dto.req.UserLoginReqDTO;
 import cn.luowb.shortlink.admin.dto.req.UserRegisterDTO;
 import cn.luowb.shortlink.admin.dto.req.UserUpdateReqDTO;

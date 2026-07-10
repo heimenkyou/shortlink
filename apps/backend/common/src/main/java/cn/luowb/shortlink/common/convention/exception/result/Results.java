@@ -1,8 +1,8 @@
-package cn.luowb.shortlink.admin.common.convention.result;
+package cn.luowb.shortlink.common.convention.exception.result;
 
 
-import cn.luowb.shortlink.admin.common.convention.exception.AbstractException;
-import cn.luowb.shortlink.admin.common.convention.result.errorcode.BaseErrorCode;
+import cn.luowb.shortlink.common.convention.exception.exception.AbstractException;
+import cn.luowb.shortlink.common.convention.exception.result.errorcode.BaseErrorCode;
 
 import java.util.Optional;
 
