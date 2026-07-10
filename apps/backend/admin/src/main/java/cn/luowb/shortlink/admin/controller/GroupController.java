@@ -1,12 +1,12 @@
 package cn.luowb.shortlink.admin.controller;
 
-import cn.luowb.shortlink.common.convention.exception.result.Result;
-import cn.luowb.shortlink.common.convention.exception.result.Results;
 import cn.luowb.shortlink.admin.dto.req.GroupSaveReqDTO;
 import cn.luowb.shortlink.admin.dto.req.GroupSortReqDTO;
 import cn.luowb.shortlink.admin.dto.req.GroupUpdateReqDTO;
 import cn.luowb.shortlink.admin.dto.resp.GroupRespDTO;
 import cn.luowb.shortlink.admin.service.GroupService;
+import cn.luowb.shortlink.common.convention.result.Result;
+import cn.luowb.shortlink.common.convention.result.Results;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
