@@ -2,8 +2,11 @@ package cn.luowb.shortlink.project.controller;
 
 import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.convention.result.Results;
+import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
+import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
+import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,5 +31,14 @@ public class LinkController {
     @PostMapping("/api/short-link/v1/create")
     public Result<LinkCreateRespDTO> createShortLink(@RequestBody LinkCreateReqDTO requestParam) {
         return Results.success(linkService.createShortLink(requestParam));
+    }
+
+    /**
+     * 分页查询短链接
+     */
+    @Operation(summary = "分页查询短链接")
+    @PostMapping("/api/short-link/v1/page")
+    public Result<PageResult<LinkPageRespDTO>> pageShortLink(@RequestBody LinkPageReqDTO requestParam) {
+        return Results.success(linkService.pageShortLink(requestParam));
     }
 }

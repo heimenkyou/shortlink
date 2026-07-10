@@ -3,12 +3,19 @@ package cn.luowb.shortlink.project.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.luowb.shortlink.common.convention.ServiceException;
+import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
+import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
+import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.service.LinkService;
 import cn.luowb.shortlink.project.util.HashUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +48,20 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         }
         shortUriCreateCachePenetrationBloomFilter.add(fullShortUrl);
         return BeanUtil.toBean(linkDO, LinkCreateRespDTO.class);
+    }
+
+    @Override
+    public PageResult<LinkPageRespDTO> pageShortLink(LinkPageReqDTO requestParam) {
+        IPage<LinkDO> page = new Page<>(requestParam.getCurrent(), requestParam.getSize());
+
+        LambdaQueryWrapper<LinkDO> wrapper = Wrappers.lambdaQuery(LinkDO.class)
+                .eq(LinkDO::getGid, requestParam.getGid())
+                .eq(LinkDO::getEnableStatus, 0)
+                .eq(LinkDO::getDelFlag, 0);
+
+        IPage<LinkDO> resultPage = this.page(page, wrapper);
+
+        return PageResult.of(resultPage.convert(each -> BeanUtil.toBean(each, LinkPageRespDTO.class)));
     }
 
     /**
