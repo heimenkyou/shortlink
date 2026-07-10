@@ -33,7 +33,7 @@ public class UserController {
      * 根据用户名查询用户
      */
     @Operation(summary = "根据用户名查询用户")
-    @GetMapping("/api/short-link/v1/user/{username}")
+    @GetMapping("/api/short-link/admin/v1/user/{username}")
     @SaIgnore
     public Result<UserRespDTO> getUserByUsername(@PathVariable String username) {
         return Results.success(userService.getUserByUsername(username));
@@ -43,7 +43,7 @@ public class UserController {
      * 用户注册
      */
     @Operation(summary = "用户注册")
-    @PostMapping("/api/short-link/v1/user")
+    @PostMapping("/api/short-link/admin/v1/user")
     public Result<Void> register(@RequestBody UserRegisterDTO requestParam) {
         userService.register(requestParam);
         return Results.success();
@@ -54,7 +54,7 @@ public class UserController {
      */
     @Operation(summary = "检查用户名是否存在")
     @Tag(name = "用户管理", description = "用户查询相关接口")
-    @GetMapping("/api/short-link/v1/user/has-username")
+    @GetMapping("/api/short-link/admin/v1/user/has-username")
     public Result<Boolean> hasUserName(@RequestParam String username) {
         return Results.success(userService.hasUserName(username));
     }
@@ -63,7 +63,7 @@ public class UserController {
      * 修改用户信息
      */
     @Operation(summary = "修改用户信息")
-    @PutMapping("/api/short-link/v1/user")
+    @PutMapping("/api/short-link/admin/v1/user")
     public Result<Void> update(@RequestBody UserUpdateReqDTO requestParam) {
         userService.update(requestParam);
         return Results.success();
@@ -73,7 +73,7 @@ public class UserController {
      * 用户登录
      */
     @Operation(summary = "用户登录")
-    @PostMapping("/api/short-link/v1/user/login")
+    @PostMapping("/api/short-link/admin/v1/user/login")
     public Result<UserLoginRespDTO> login(@RequestBody UserLoginReqDTO requestParam) {
         return Results.success(userService.login(requestParam));
     }
@@ -82,7 +82,7 @@ public class UserController {
      * 检查用户是否登录
      */
     @Operation(summary = "检查用户是否登录")
-    @GetMapping("/api/short-link/v1/user/check-login")
+    @GetMapping("/api/short-link/admin/v1/user/check-login")
     public Result<Boolean> checkLogin(@RequestParam String token) {
         return Results.success(userService.checkLogin(token));
     }
@@ -91,7 +91,7 @@ public class UserController {
      * 用户退出登录
      */
     @Operation(summary = "用户退出登录")
-    @PostMapping("/api/short-link/v1/user/logout")
+    @PostMapping("/api/short-link/admin/v1/user/logout")
     public Result<Void> logout(@RequestParam String token) {
         userService.logout(token);
         return Results.success();
