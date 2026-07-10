@@ -66,11 +66,10 @@
             <groupId>cn.dev33</groupId>
             <artifactId>sa-token-redis-jackson</artifactId>
         </dependency>
-
+        <!-- 项目公共模块 -->
         <dependency>
             <groupId>cn.luowb.shortlink</groupId>
             <artifactId>shortlink-common</artifactId>
         </dependency>
-
     </dependencies>
 </project>
