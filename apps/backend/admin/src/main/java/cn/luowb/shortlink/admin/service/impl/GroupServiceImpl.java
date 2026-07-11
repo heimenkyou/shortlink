@@ -39,6 +39,12 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
     @Override
     public void save(String groupName) {
         String username = UserContext.getUsername();
+        save(username, groupName);
+    }
+
+
+    @Override
+    public void save(String username, String groupName) {
         // 生成不重复的分组标识
         String gid;
         while (true) {
@@ -142,4 +148,5 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
             this.update(groupDO, wrapper);
         });
     }
+
 }

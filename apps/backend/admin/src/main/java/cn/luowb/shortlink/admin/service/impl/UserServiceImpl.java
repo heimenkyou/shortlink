@@ -11,6 +11,7 @@ import cn.luowb.shortlink.admin.dto.req.UserRegisterDTO;
 import cn.luowb.shortlink.admin.dto.req.UserUpdateReqDTO;
 import cn.luowb.shortlink.admin.dto.resp.UserLoginRespDTO;
 import cn.luowb.shortlink.admin.dto.resp.UserRespDTO;
+import cn.luowb.shortlink.admin.service.GroupService;
 import cn.luowb.shortlink.admin.service.UserService;
 import cn.luowb.shortlink.common.convention.ServiceException;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
@@ -22,6 +23,7 @@ import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static cn.luowb.shortlink.admin.common.constant.RedisCacheKeyEnum.LOCK_USER_REGISTER_KEY;
 import static cn.luowb.shortlink.common.convention.result.errorcode.BaseErrorCode.USER_NAME_EXIST_ERROR;
@@ -35,6 +37,7 @@ import static cn.luowb.shortlink.common.convention.result.errorcode.BaseErrorCod
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
     private final RedissonClient redissonClient;
+    private final GroupService groupService;
 
     /**
      * 根据用户名查询用户信息
@@ -57,6 +60,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
      * 用户注册
      */
     @Override
+    @Transactional
     public void register(UserRegisterDTO requestParam) {
         if (hasUserName(requestParam.getUsername())) {
             throw new ClientException(USER_NAME_EXIST_ERROR);
@@ -74,6 +78,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
                 throw new ServiceException(USER_REGISTER_ERROR);
             }
             userRegisterCachePenetrationBloomFilter.add(requestParam.getUsername());
+            // 注册成功后，添加默认短链接分组
+            groupService.save(userDO.getUsername(), "默认分组");
         } finally {
             lock.unlock();
         }
