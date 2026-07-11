@@ -27,18 +27,19 @@ public class SaTokenConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(new SaInterceptor(handle -> StpUtil.checkLogin()))
                 .addPathPatterns("/api/**")
                 .excludePathPatterns(
-                        "/api/short-link/v1/user/login",
-                        "/api/short-link/v1/user/has-username",
-                        "/api/short-link/v1/user/check-login"
-//                        "/api/short-link/v1/user"
+                        "/api/short-link/admin/v1/user/login",
+                        "/api/short-link/admin/v1/user/has-username",
+                        "/api/short-link/admin/v1/user/check-login",
+                        "/api/short-link/admin/v1/user"
                 );
         // 用户信息上下文拦截器，装配用户信息
         registry.addInterceptor(userContextInterceptor)
                 .addPathPatterns("/api/**")
                 .excludePathPatterns(
-                        "/api/short-link/v1/user/login",
-                        "/api/short-link/v1/user/has-username",
-                        "/api/short-link/v1/user/check-login"
+                        "/api/short-link/admin/v1/user/login",
+                        "/api/short-link/admin/v1/user/has-username",
+                        "/api/short-link/admin/v1/user/check-login",
+                        "/api/short-link/admin/v1/user"
                 );
     }
 
