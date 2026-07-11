@@ -57,7 +57,8 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         LambdaQueryWrapper<LinkDO> wrapper = Wrappers.lambdaQuery(LinkDO.class)
                 .eq(LinkDO::getGid, requestParam.getGid())
                 .eq(LinkDO::getEnableStatus, 0)
-                .eq(LinkDO::getDelFlag, 0);
+                .eq(LinkDO::getDelFlag, 0)
+                .orderByDesc(LinkDO::getCreateTime);
 
         IPage<LinkDO> resultPage = this.page(page, wrapper);
 
