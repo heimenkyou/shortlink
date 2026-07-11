@@ -8,6 +8,7 @@ import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
+import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.service.LinkService;
@@ -23,6 +24,8 @@ import org.redisson.api.RBloomFilter;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 短链接服务实现类
  */
@@ -31,6 +34,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements LinkService {
     private final RBloomFilter<String> shortUriCreateCachePenetrationBloomFilter;
+    private final LinkMapper linkMapper;
 
     @Override
     public LinkCreateRespDTO createShortLink(LinkCreateReqDTO requestParam) {
@@ -63,6 +67,17 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         IPage<LinkDO> resultPage = this.page(page, wrapper);
 
         return PageResult.of(resultPage.convert(each -> BeanUtil.toBean(each, LinkPageRespDTO.class)));
+    }
+
+    /**
+     * 查询短链接分组下的短链接数量
+     *
+     * @param gidList 分组ID列表
+     * @return 分组ID列表对应的 分组数量列表
+     */
+    @Override
+    public List<GroupCountQueryRespDTO> groupShortLinkCount(List<String> gidList) {
+        return linkMapper.selectCountByGid(gidList);
     }
 
     /**

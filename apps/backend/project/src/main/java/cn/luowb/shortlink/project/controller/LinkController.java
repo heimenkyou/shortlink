@@ -5,16 +5,16 @@ import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
+import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 短链接控制器
@@ -41,5 +41,14 @@ public class LinkController {
     @GetMapping("/api/short-link/v1/page")
     public Result<PageResult<LinkPageRespDTO>> pageShortLink(LinkPageReqDTO requestParam) {
         return Results.success(linkService.pageShortLink(requestParam));
+    }
+
+    /**
+     * 查询短链接分组下的短链接数量
+     */
+    @Operation(summary = "查询短链接分组下的短链接数量")
+    @GetMapping("/api/short-link/admin/v1/group/count")
+    public Result<List<GroupCountQueryRespDTO>> groupShortLinkCount(@RequestParam("gidList") List<String> gidList) {
+        return Results.success(linkService.groupShortLinkCount(gidList));
     }
 }

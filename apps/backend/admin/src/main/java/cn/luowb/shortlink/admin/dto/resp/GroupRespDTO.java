@@ -46,4 +46,10 @@ public class GroupRespDTO {
      */
     @Schema(description = "修改时间")
     private LocalDateTime updateTime;
+
+    /**
+     * 分组下的短链接数量
+     */
+    @Schema(description = "分组下的短链接数量")
+    private Integer shortLinkCount;
 }

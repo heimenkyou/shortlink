@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.luowb.shortlink.project.dao.mapper.LinkMapper">
+
+    <!-- 查询分组下的短链接数量 -->
+    <select id="selectCountByGid" resultType="cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO">
+        SELECT gid, COUNT(*) AS shortLinkCount
+        FROM t_link
+        WHERE enable_status = 0
+        AND gid IN
+        <foreach collection="gidList" item="gid" open="(" separator="," close=")">
+            #{gid}
+        </foreach>
+        GROUP BY gid
+    </select>
+</mapper>
