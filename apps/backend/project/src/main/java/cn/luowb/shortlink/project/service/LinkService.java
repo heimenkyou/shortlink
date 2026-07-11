@@ -4,6 +4,7 @@ import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
+import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
@@ -39,4 +40,10 @@ public interface LinkService extends IService<LinkDO> {
      * @return 分组ID列表对应的 分组数量列表
      */
     List<GroupCountQueryRespDTO> groupShortLinkCount(List<String> gidList);
+
+    /**
+     * 修改短链接
+     * @param requestParam 修改短链接请求参数
+     */
+    void updateShortLink(LinkUpdateReqDTO requestParam);
 }

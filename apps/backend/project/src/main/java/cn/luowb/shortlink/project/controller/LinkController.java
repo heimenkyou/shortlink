@@ -5,6 +5,7 @@ import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
+import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
@@ -32,6 +33,16 @@ public class LinkController {
     @PostMapping("/api/short-link/v1/create")
     public Result<LinkCreateRespDTO> createShortLink(@RequestBody LinkCreateReqDTO requestParam) {
         return Results.success(linkService.createShortLink(requestParam));
+    }
+
+    /**
+     * 修改短链接
+     */
+    @Operation(summary = "修改短链接")
+    @PostMapping("/api/short-link/v1/update")
+    public Result<Void> updateShortLink(@RequestBody LinkUpdateReqDTO requestParam) {
+        linkService.updateShortLink(requestParam);
+        return Results.success();
     }
 
     /**

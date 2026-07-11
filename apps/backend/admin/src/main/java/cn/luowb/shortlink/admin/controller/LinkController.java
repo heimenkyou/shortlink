@@ -3,9 +3,11 @@ package cn.luowb.shortlink.admin.controller;
 import cn.luowb.shortlink.admin.remote.dto.LinkRemoteService;
 import cn.luowb.shortlink.admin.remote.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.req.LinkPageReqDTO;
+import cn.luowb.shortlink.admin.remote.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.common.convention.result.Result;
+import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,5 +42,15 @@ public class LinkController {
     @GetMapping("/api/short-link/admin/v1/page")
     public Result<PageResult<LinkPageRespDTO>> pageShortLink(LinkPageReqDTO requestParam) {
         return linkRemoteService.pageShortLink(requestParam);
+    }
+
+    /**
+     * 修改短链接
+     */
+    @Operation(summary = "修改短链接")
+    @PostMapping("/api/short-link/admin/v1/update")
+    public Result<Void> updateShortLink(@RequestBody LinkUpdateReqDTO requestParam) {
+        linkRemoteService.updateShortLink(requestParam);
+        return Results.success();
     }
 }

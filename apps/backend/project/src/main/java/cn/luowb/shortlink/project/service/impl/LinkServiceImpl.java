@@ -8,12 +8,14 @@ import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
+import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.service.LinkService;
 import cn.luowb.shortlink.project.util.HashUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -78,6 +81,45 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     @Override
     public List<GroupCountQueryRespDTO> groupShortLinkCount(List<String> gidList) {
         return linkMapper.selectCountByGid(gidList);
+    }
+
+    /**
+     * 修改短链接
+     *
+     * @param requestParam 修改短链接请求参数
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateShortLink(LinkUpdateReqDTO requestParam) {
+        LambdaUpdateWrapper<LinkDO> wrapper = Wrappers.lambdaUpdate(LinkDO.class)
+                .eq(LinkDO::getFullShortUrl, requestParam.getFullShortUrl())
+                .eq(LinkDO::getGid, requestParam.getOldGid())
+                .eq(LinkDO::getEnableStatus, 0)
+                .eq(LinkDO::getDelFlag, 0);
+        // 查询短链接是否存在
+        LinkDO linkDO = linkMapper.selectOne(wrapper);
+        if (linkDO == null) {
+            throw new ServiceException("短链接不存在");
+        }
+        // 将前端传来的修改属性覆盖到旧对象上
+        BeanUtil.copyProperties(requestParam, linkDO);
+        linkDO.setGid(requestParam.getNewGid());
+        // 清空更新时间和主键，确保自动生成
+        linkDO.setUpdateTime(null);
+        linkDO.setId(null);
+
+        // 如果没改 gid，直接更新
+        if (requestParam.getOldGid().equals(requestParam.getNewGid())) {
+            if (!this.update(linkDO, wrapper)) {
+                throw new ServiceException("短链接更新失败");
+            }
+        } else {
+            // 如果改了 gid，先删后增
+            if (!this.remove(wrapper)) {
+                throw new ServiceException("短链接更新失败");
+            }
+            this.save(linkDO);
+        }
     }
 
     /**
