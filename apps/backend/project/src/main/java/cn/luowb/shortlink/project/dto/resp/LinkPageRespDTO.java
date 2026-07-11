@@ -72,4 +72,10 @@ public class LinkPageRespDTO {
      */
     @Schema(description = "描述")
     private String describe;
+
+    /**
+     * 创建时间
+     */
+    @Schema(description = "创建时间")
+    private LocalDateTime createTime;
 }
