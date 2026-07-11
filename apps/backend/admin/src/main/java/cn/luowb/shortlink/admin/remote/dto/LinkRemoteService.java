@@ -3,6 +3,7 @@ package cn.luowb.shortlink.admin.remote.dto;
 import cn.hutool.http.HttpUtil;
 import cn.luowb.shortlink.admin.remote.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.req.LinkPageReqDTO;
+import cn.luowb.shortlink.admin.remote.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.common.convention.result.Result;
@@ -11,6 +12,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +38,18 @@ public interface LinkRemoteService {
         requestMap.put("current", requestParam.getCurrent());
         requestMap.put("size", requestParam.getSize());
         String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/page", requestMap);
+        return JSON.parseObject(resultPageJson, new TypeReference<>() {
+        });
+    }
+
+
+    /**
+     * 查询短链接分组下的短链接数量
+     */
+    default Result<List<GroupCountQueryRespDTO>> groupShortLinkCount(List<String> gidList) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("gidList", gidList);
+        String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/admin/v1/group/count", requestMap);
         return JSON.parseObject(resultPageJson, new TypeReference<>() {
         });
     }

@@ -8,8 +8,11 @@ import cn.luowb.shortlink.admin.dao.mapper.GroupMapper;
 import cn.luowb.shortlink.admin.dto.req.GroupSortReqDTO;
 import cn.luowb.shortlink.admin.dto.req.GroupUpdateReqDTO;
 import cn.luowb.shortlink.admin.dto.resp.GroupRespDTO;
+import cn.luowb.shortlink.admin.remote.dto.LinkRemoteService;
+import cn.luowb.shortlink.admin.remote.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.admin.service.GroupService;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
+import cn.luowb.shortlink.common.convention.result.Result;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -17,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 短链接分组服务实现
@@ -24,6 +29,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
+    // TODO 以后再改成 feign 调用
+    LinkRemoteService linkRemoteService = new LinkRemoteService() {
+    };
 
     /**
      * 新增短链接分组
@@ -65,7 +73,24 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
                 .eq(GroupDO::getDelFlag, 0)
                 .orderByDesc(GroupDO::getSortOrder, GroupDO::getUpdateTime);
         List<GroupDO> groupDOList = this.list(wrapper);
-        return BeanUtil.copyToList(groupDOList, GroupRespDTO.class);
+        // 1. 拷贝分组基础信息
+        List<GroupRespDTO> result = BeanUtil.copyToList(groupDOList, GroupRespDTO.class);
+        // 2. 查询每个分组下的短链接数量
+        Result<List<GroupCountQueryRespDTO>> countResult = linkRemoteService.groupShortLinkCount(groupDOList.stream().map(GroupDO::getGid).toList());
+        if (!countResult.isSuccess()) {
+            throw new ClientException("分组短链接数量查询失败");
+        }
+        // 3. 构建 gid -> 短链接数量 的映射
+        List<GroupCountQueryRespDTO> countList = countResult.getData();
+        Map<String, Integer> countMap = countList.stream()
+                .collect(Collectors.toMap(GroupCountQueryRespDTO::getGid,
+                        GroupCountQueryRespDTO::getShortLinkCount));
+        // 4. 填充每个分组的短链接数量（若无则默认0）
+        for (GroupRespDTO respDTO : result) {
+            Integer count = countMap.getOrDefault(respDTO.getGid(), 0);
+            respDTO.setShortLinkCount(count);
+        }
+        return result;
     }
 
     /**
