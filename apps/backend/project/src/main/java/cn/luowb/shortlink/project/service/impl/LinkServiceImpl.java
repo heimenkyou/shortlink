@@ -2,8 +2,8 @@ package cn.luowb.shortlink.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.luowb.shortlink.common.constant.RedisCacheKeyEnum;
 import cn.luowb.shortlink.common.convention.ServiceException;
+import cn.luowb.shortlink.common.convention.exception.ClientException;
 import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dao.entity.LinkGotoDO;
@@ -27,6 +27,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.GOTO_SHORT_LINK_KEY;
+import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.LOCK_GOTO_SHORT_LINK_KEY;
 
 /**
  * 短链接服务实现类
@@ -46,6 +51,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final LinkMapper linkMapper;
     private final LinkGotoMapper linkGotoMapper;
     private final StringRedisTemplate stringRedisTemplate;
+    private final RedissonClient redissonClient;
 
     /**
      * 解析短链接
@@ -58,33 +64,53 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     public String resolveShortUrl(String shortUrl, HttpServletRequest request) {
         String domain = request.getServerName();
         String fullShortUrl = domain + "/" + shortUrl;
-
-        // 布隆过滤器判空
-        if (!shortUriCreateCachePenetrationBloomFilter.contains(fullShortUrl)) {
-            throw new ServiceException("短链接不存在");
-        }
-        // 在 redis 中查缓存
-        String cacheKey = RedisCacheKeyEnum.GOTO_SHORT_LINK_KEY.getKey(fullShortUrl);
+        // 在 redis 中查缓存，快速返回大部分正常请求
+        String cacheKey = GOTO_SHORT_LINK_KEY.getKey(fullShortUrl);
         String cachedUrl = stringRedisTemplate.opsForValue().get(cacheKey);
         if (cachedUrl != null) {
+            if (cachedUrl.isEmpty()) {
+                throw new ClientException("短链接不存在");
+            }
             return cachedUrl;
         }
-
-        // 先查路由表获取 gid
-        LinkGotoDO linkGotoDO = linkGotoMapper.selectOne(Wrappers.lambdaQuery(LinkGotoDO.class)
-                .eq(LinkGotoDO::getFullShortUrl, fullShortUrl));
-        if (linkGotoDO == null) {
-            throw new ServiceException("短链接不存在");
+        // 布隆过滤器判空，拦截大部分恶意请求
+        if (!shortUriCreateCachePenetrationBloomFilter.contains(fullShortUrl)) {
+            throw new ClientException("短链接不存在");
         }
-        // 再根据 gid 查原始链接
-        String gid = linkGotoDO.getGid();
-        LinkDO linkDO = this.getOne(Wrappers.lambdaQuery(LinkDO.class)
-                .eq(LinkDO::getGid, gid)
-                .eq(LinkDO::getFullShortUrl, fullShortUrl));
-        String originUrl = linkDO.getOriginUrl();
-
-        // 重建缓存，过期时间设置为 10 分钟
-        stringRedisTemplate.opsForValue().set(cacheKey, originUrl, 10 * 60, TimeUnit.SECONDS);
+        // 准备重建缓存
+        RLock lock = redissonClient.getLock(LOCK_GOTO_SHORT_LINK_KEY.getKey(fullShortUrl));
+        String originUrl;
+        lock.lock();
+        try {
+            // 再次查缓存，
+            cachedUrl = stringRedisTemplate.opsForValue().get(cacheKey);
+            if (cachedUrl != null) {
+                if (cachedUrl.isEmpty()) {
+                    throw new ClientException("短链接不存在");
+                }
+                return cachedUrl;
+            }
+            // 过期时间设置为 10 分钟 + 随机数（0-60 秒）
+            int cacheTime = 10 * 60 + (int) (Math.random() * 60);
+            // 先查路由表获取 gid
+            LinkGotoDO linkGotoDO = linkGotoMapper.selectOne(Wrappers.lambdaQuery(LinkGotoDO.class)
+                    .eq(LinkGotoDO::getFullShortUrl, fullShortUrl));
+            if (linkGotoDO == null) {
+                // 缓存空值，用于布隆过滤器误判的情况
+                stringRedisTemplate.opsForValue().set(cacheKey, "", cacheTime, TimeUnit.SECONDS);
+                throw new ClientException("短链接不存在");
+            }
+            // 再根据 gid 查原始链接
+            String gid = linkGotoDO.getGid();
+            LinkDO linkDO = this.getOne(Wrappers.lambdaQuery(LinkDO.class)
+                    .eq(LinkDO::getGid, gid)
+                    .eq(LinkDO::getFullShortUrl, fullShortUrl));
+            originUrl = linkDO.getOriginUrl();
+            // 正常缓存
+            stringRedisTemplate.opsForValue().set(cacheKey, originUrl, cacheTime, TimeUnit.SECONDS);
+        } finally {
+            lock.unlock();
+        }
         return originUrl;
     }
 
@@ -110,6 +136,8 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
             throw new ServiceException("短链接生成冲突，请稍后重试");
         }
         shortUriCreateCachePenetrationBloomFilter.add(fullShortUrl);
+        // 删除在redis中可能存在的空值缓存
+        stringRedisTemplate.delete(GOTO_SHORT_LINK_KEY.getKey(fullShortUrl));
         return BeanUtil.toBean(linkDO, LinkCreateRespDTO.class);
     }
 
@@ -176,6 +204,8 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
             }
             this.save(linkDO);
         }
+        // 删除在redis中可能存在的缓存
+        stringRedisTemplate.delete(GOTO_SHORT_LINK_KEY.getKey(requestParam.getFullShortUrl()));
     }
 
 
