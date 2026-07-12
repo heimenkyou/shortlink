@@ -2,6 +2,7 @@ package cn.luowb.shortlink.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.luowb.shortlink.common.constant.RedisCacheKeyEnum;
 import cn.luowb.shortlink.common.convention.ServiceException;
 import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
@@ -27,10 +28,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 短链接服务实现类
@@ -42,6 +45,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final RBloomFilter<String> shortUriCreateCachePenetrationBloomFilter;
     private final LinkMapper linkMapper;
     private final LinkGotoMapper linkGotoMapper;
+    private final StringRedisTemplate stringRedisTemplate;
 
     /**
      * 解析短链接
@@ -55,9 +59,17 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         String domain = request.getServerName();
         String fullShortUrl = domain + "/" + shortUrl;
 
+        // 布隆过滤器判空
         if (!shortUriCreateCachePenetrationBloomFilter.contains(fullShortUrl)) {
             throw new ServiceException("短链接不存在");
         }
+        // 在 redis 中查缓存
+        String cacheKey = RedisCacheKeyEnum.GOTO_SHORT_LINK_KEY.getKey(fullShortUrl);
+        String cachedUrl = stringRedisTemplate.opsForValue().get(cacheKey);
+        if (cachedUrl != null) {
+            return cachedUrl;
+        }
+
         // 先查路由表获取 gid
         LinkGotoDO linkGotoDO = linkGotoMapper.selectOne(Wrappers.lambdaQuery(LinkGotoDO.class)
                 .eq(LinkGotoDO::getFullShortUrl, fullShortUrl));
@@ -69,7 +81,11 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         LinkDO linkDO = this.getOne(Wrappers.lambdaQuery(LinkDO.class)
                 .eq(LinkDO::getGid, gid)
                 .eq(LinkDO::getFullShortUrl, fullShortUrl));
-        return linkDO.getOriginUrl();
+        String originUrl = linkDO.getOriginUrl();
+
+        // 重建缓存，过期时间设置为 10 分钟
+        stringRedisTemplate.opsForValue().set(cacheKey, originUrl, 10 * 60, TimeUnit.SECONDS);
+        return originUrl;
     }
 
     @Transactional(rollbackFor = Exception.class)
