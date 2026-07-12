@@ -25,7 +25,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static cn.luowb.shortlink.admin.common.constant.RedisCacheKeyEnum.LOCK_USER_REGISTER_KEY;
+import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.LOCK_USER_REGISTER_KEY;
 import static cn.luowb.shortlink.common.convention.result.errorcode.BaseErrorCode.USER_NAME_EXIST_ERROR;
 import static cn.luowb.shortlink.common.convention.result.errorcode.BaseErrorCode.USER_REGISTER_ERROR;
 
