@@ -626,6 +626,151 @@ CREATE TABLE `t_link_15`
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
 
+CREATE TABLE `t_link_goto_0`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_0';
+
+CREATE TABLE `t_link_goto_1`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_1';
+
+CREATE TABLE `t_link_goto_2`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_2';
+
+CREATE TABLE `t_link_goto_3`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_3';
+
+CREATE TABLE `t_link_goto_4`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_4';
+
+CREATE TABLE `t_link_goto_5`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_5';
+
+CREATE TABLE `t_link_goto_6`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_6';
+
+CREATE TABLE `t_link_goto_7`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_7';
+
+CREATE TABLE `t_link_goto_8`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_8';
+
+CREATE TABLE `t_link_goto_9`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_9';
+
+CREATE TABLE `t_link_goto_10`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_10';
+
+CREATE TABLE `t_link_goto_11`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_11';
+
+CREATE TABLE `t_link_goto_12`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_12';
+
+CREATE TABLE `t_link_goto_13`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_13';
+
+CREATE TABLE `t_link_goto_14`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_14';
+
+CREATE TABLE `t_link_goto_15`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '完整短链接',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT '链接跳转表_15';
+
+
 -- 用户表
 CREATE TABLE `t_user_0`
 (
