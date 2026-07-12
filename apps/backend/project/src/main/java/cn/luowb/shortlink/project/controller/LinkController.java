@@ -1,5 +1,6 @@
 package cn.luowb.shortlink.project.controller;
 
+import cn.luowb.shortlink.common.convention.exception.ClientException;
 import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,12 +29,20 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "短链接管理")
+@Slf4j
 public class LinkController {
     private final LinkService linkService;
 
     @GetMapping("/{shortUrl:[a-zA-Z0-9]{6}}")
     public ResponseEntity<Void> redirect(@PathVariable String shortUrl, HttpServletRequest request) {
-        String longUrl = linkService.resolveShortUrl(shortUrl, request);
+        String longUrl = null;
+        try {
+            longUrl = linkService.resolveShortUrl(shortUrl, request);
+        } catch (ClientException e) {
+            log.info("resolve short url failed, shortUrl: {}, msg: {}", shortUrl, e.getMessage());
+            // 短链接不存在，跳转到404页面
+            longUrl = "/page/notfound";
+        }
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(longUrl))
                 .build();
