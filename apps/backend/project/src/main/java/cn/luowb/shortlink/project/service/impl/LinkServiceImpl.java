@@ -35,6 +35,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -107,6 +108,11 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                     .eq(LinkDO::getGid, gid)
                     .eq(LinkDO::getFullShortUrl, fullShortUrl));
             originUrl = linkDO.getOriginUrl();
+            // 判断是否过期
+            if (linkDO.getValidDate() != null && linkDO.getValidDate().isBefore(LocalDateTime.now())) {
+                stringRedisTemplate.opsForValue().set(cacheKey, "", 30, TimeUnit.SECONDS);
+                throw new ClientException("短链接已过期");
+            }
             // 正常缓存
             stringRedisTemplate.opsForValue().set(cacheKey, originUrl, cacheTime, TimeUnit.SECONDS);
         } finally {
