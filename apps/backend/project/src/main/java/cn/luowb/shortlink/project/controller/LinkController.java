@@ -12,9 +12,13 @@ import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -25,6 +29,14 @@ import java.util.List;
 @Tag(name = "短链接管理")
 public class LinkController {
     private final LinkService linkService;
+
+    @GetMapping("/{shortUrl:[a-zA-Z0-9]{6}}")
+    public ResponseEntity<Void> redirect(@PathVariable String shortUrl, HttpServletRequest request) {
+        String longUrl = linkService.resolveShortUrl(shortUrl, request);
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(longUrl))
+                .build();
+    }
 
     /**
      * 创建短链接

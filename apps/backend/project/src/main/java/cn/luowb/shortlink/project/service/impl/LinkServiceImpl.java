@@ -5,6 +5,8 @@ import cn.hutool.core.util.IdUtil;
 import cn.luowb.shortlink.common.convention.ServiceException;
 import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
+import cn.luowb.shortlink.project.dao.entity.LinkGotoDO;
+import cn.luowb.shortlink.project.dao.mapper.LinkGotoMapper;
 import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
@@ -20,6 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
@@ -38,7 +41,38 @@ import java.util.List;
 public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements LinkService {
     private final RBloomFilter<String> shortUriCreateCachePenetrationBloomFilter;
     private final LinkMapper linkMapper;
+    private final LinkGotoMapper linkGotoMapper;
 
+    /**
+     * 解析短链接
+     *
+     * @param shortUrl 短链接后缀
+     * @param request  HTTP请求
+     * @return 原始链接
+     */
+    @Override
+    public String resolveShortUrl(String shortUrl, HttpServletRequest request) {
+        String domain = request.getServerName();
+        String fullShortUrl = domain + "/" + shortUrl;
+
+        if (!shortUriCreateCachePenetrationBloomFilter.contains(fullShortUrl)) {
+            throw new ServiceException("短链接不存在");
+        }
+        // 先查路由表获取 gid
+        LinkGotoDO linkGotoDO = linkGotoMapper.selectOne(Wrappers.lambdaQuery(LinkGotoDO.class)
+                .eq(LinkGotoDO::getFullShortUrl, fullShortUrl));
+        if (linkGotoDO == null) {
+            throw new ServiceException("短链接不存在");
+        }
+        // 再根据 gid 查原始链接
+        String gid = linkGotoDO.getGid();
+        LinkDO linkDO = this.getOne(Wrappers.lambdaQuery(LinkDO.class)
+                .eq(LinkDO::getGid, gid)
+                .eq(LinkDO::getFullShortUrl, fullShortUrl));
+        return linkDO.getOriginUrl();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public LinkCreateRespDTO createShortLink(LinkCreateReqDTO requestParam) {
         String suffix = generateSuffix(requestParam);
@@ -49,6 +83,12 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         linkDO.setEnableStatus(0);
         try {
             this.save(linkDO);
+            // 插入跳转记录
+            LinkGotoDO linkGotoDO = LinkGotoDO.builder()
+                    .gid(requestParam.getGid())
+                    .fullShortUrl(fullShortUrl)
+                    .build();
+            linkGotoMapper.insert(linkGotoDO);
         } catch (DuplicateKeyException e) {
             log.warn("短链接重复入库，{}", suffix);
             throw new ServiceException("短链接生成冲突，请稍后重试");
@@ -121,6 +161,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
             this.save(linkDO);
         }
     }
+
 
     /**
      * 生成短链接后缀
