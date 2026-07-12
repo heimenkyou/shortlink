@@ -17,6 +17,7 @@ import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.service.LinkService;
 import cn.luowb.shortlink.project.util.HashUtil;
+import cn.luowb.shortlink.project.util.LinkUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -138,6 +139,10 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         shortUriCreateCachePenetrationBloomFilter.add(fullShortUrl);
         // 删除在redis中可能存在的空值缓存
         stringRedisTemplate.delete(GOTO_SHORT_LINK_KEY.getKey(fullShortUrl));
+        // 缓存预热
+        String cacheKey = GOTO_SHORT_LINK_KEY.getKey(fullShortUrl);
+        long cacheTime = LinkUtil.getCacheTime(requestParam.getValidDate());
+        stringRedisTemplate.opsForValue().set(cacheKey, requestParam.getOriginUrl(), cacheTime, TimeUnit.MILLISECONDS);
         return BeanUtil.toBean(linkDO, LinkCreateRespDTO.class);
     }
 
