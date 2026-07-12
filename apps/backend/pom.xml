@@ -37,6 +37,7 @@
         <spotless.version>2.46.1</spotless.version>
         <sa-token.version>1.45.0</sa-token.version>
         <project.version>1.0-SNAPSHOT</project.version>
+        <jsoup.version>1.17.2</jsoup.version>
     </properties>
 
     <dependencies>
@@ -144,6 +145,12 @@
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-redis-jackson</artifactId>
                 <version>${sa-token.version}</version>
+            </dependency>
+            <!-- 解析 HTML 文档 -->
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

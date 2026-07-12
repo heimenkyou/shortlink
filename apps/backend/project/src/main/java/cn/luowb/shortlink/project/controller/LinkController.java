@@ -33,9 +33,13 @@ import java.util.List;
 public class LinkController {
     private final LinkService linkService;
 
+    /**
+     * 短链接跳转
+     */
+    @Operation(summary = "短链接跳转")
     @GetMapping("/{shortUrl:[a-zA-Z0-9]{6}}")
     public ResponseEntity<Void> redirect(@PathVariable String shortUrl, HttpServletRequest request) {
-        String longUrl = null;
+        String longUrl;
         try {
             longUrl = linkService.resolveShortUrl(shortUrl, request);
         } catch (ClientException e) {
