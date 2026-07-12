@@ -4,6 +4,7 @@ import cn.hutool.http.HttpUtil;
 import cn.luowb.shortlink.admin.remote.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.req.LinkUpdateReqDTO;
+import cn.luowb.shortlink.admin.remote.dto.req.TrashSaveReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
@@ -64,6 +65,17 @@ public interface LinkRemoteService {
 
     default Result<WebsiteMetadataRespDTO> fetchMetadata(String url) {
         String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/metadata", Map.of("url", url));
+        return JSON.parseObject(resultPageJson, new TypeReference<>() {
+        });
+    }
+
+    /**
+     * 将链接移动到回收站
+     *
+     * @param requestParam 将链接移动到回收站请求参数
+     */
+    default Result<Void> saveTrash(TrashSaveReqDTO requestParam) {
+        String resultPageJson = HttpUtil.post("http://localhost:8001/api/short-link/v1/trash/save", JSON.toJSONString(requestParam));
         return JSON.parseObject(resultPageJson, new TypeReference<>() {
         });
     }

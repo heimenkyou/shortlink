@@ -109,13 +109,16 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
             String gid = linkGotoDO.getGid();
             LinkDO linkDO = this.getOne(Wrappers.lambdaQuery(LinkDO.class)
                     .eq(LinkDO::getGid, gid)
-                    .eq(LinkDO::getFullShortUrl, fullShortUrl));
-            originUrl = linkDO.getOriginUrl();
+                    .eq(LinkDO::getFullShortUrl, fullShortUrl)
+                    .eq(LinkDO::getEnableStatus, 0)
+                    .eq(LinkDO::getDelFlag, 0)
+            );
             // 判断是否过期
-            if (linkDO.getValidDate() != null && linkDO.getValidDate().isBefore(LocalDateTime.now())) {
+            if (linkDO == null || (linkDO.getValidDate() != null && linkDO.getValidDate().isBefore(LocalDateTime.now()))) {
                 stringRedisTemplate.opsForValue().set(cacheKey, "", 30, TimeUnit.SECONDS);
-                throw new ClientException("短链接已过期");
+                throw new ClientException("短链接不存在或已过期");
             }
+            originUrl = linkDO.getOriginUrl();
             // 正常缓存
             stringRedisTemplate.opsForValue().set(cacheKey, originUrl, cacheTime, TimeUnit.SECONDS);
         } finally {

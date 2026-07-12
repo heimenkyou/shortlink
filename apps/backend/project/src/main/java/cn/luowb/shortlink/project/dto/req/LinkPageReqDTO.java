@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
+@Schema(description = "短链接分页查询请求参数")
 public class LinkPageReqDTO extends BasePageQuery {
 
     /**
