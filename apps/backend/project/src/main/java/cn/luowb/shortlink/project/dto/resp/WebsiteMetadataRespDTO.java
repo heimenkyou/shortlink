@@ -21,5 +21,5 @@ public class WebsiteMetadataRespDTO {
      * 网站图标URL
      */
     @Schema(description = "网站图标URL")
-    private String iconUrl;
+    private String favicon;
 }

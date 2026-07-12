@@ -59,6 +59,6 @@ public class UrlMetadataServiceImpl implements UrlMetadataService {
             }
         }
 
-        return WebsiteMetadataRespDTO.builder().title(title).iconUrl(iconUrl).build();
+        return WebsiteMetadataRespDTO.builder().title(title).favicon(iconUrl).build();
     }
 }

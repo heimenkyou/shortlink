@@ -15,7 +15,9 @@ import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
+import cn.luowb.shortlink.project.dto.resp.WebsiteMetadataRespDTO;
 import cn.luowb.shortlink.project.service.LinkService;
+import cn.luowb.shortlink.project.service.UrlMetadataService;
 import cn.luowb.shortlink.project.util.HashUtil;
 import cn.luowb.shortlink.project.util.LinkUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -54,6 +56,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final LinkGotoMapper linkGotoMapper;
     private final StringRedisTemplate stringRedisTemplate;
     private final RedissonClient redissonClient;
+    private final UrlMetadataService urlMetadataService;
 
     /**
      * 解析短链接
@@ -130,7 +133,11 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         linkDO.setFullShortUrl(fullShortUrl);
         linkDO.setShortUri(suffix);
         linkDO.setEnableStatus(0);
+        // 获取网站图标
+        WebsiteMetadataRespDTO metadata = urlMetadataService.fetchMetadata(requestParam.getOriginUrl());
+        linkDO.setFavicon(metadata.getFavicon());
         try {
+            // 插入短链接记录
             this.save(linkDO);
             // 插入跳转记录
             LinkGotoDO linkGotoDO = LinkGotoDO.builder()
