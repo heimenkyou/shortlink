@@ -97,7 +97,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                     .eq(LinkGotoDO::getFullShortUrl, fullShortUrl));
             if (linkGotoDO == null) {
                 // 缓存空值，用于布隆过滤器误判的情况
-                stringRedisTemplate.opsForValue().set(cacheKey, "", cacheTime, TimeUnit.SECONDS);
+                stringRedisTemplate.opsForValue().set(cacheKey, "", 30, TimeUnit.SECONDS);
                 throw new ClientException("短链接不存在");
             }
             // 再根据 gid 查原始链接
