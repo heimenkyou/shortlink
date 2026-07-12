@@ -6,15 +6,13 @@ import cn.luowb.shortlink.admin.remote.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
+import cn.luowb.shortlink.admin.remote.dto.resp.WebsiteMetadataRespDTO;
 import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 短链接后管管理控制器
@@ -52,5 +50,14 @@ public class LinkController {
     public Result<Void> updateShortLink(@RequestBody LinkUpdateReqDTO requestParam) {
         linkRemoteService.updateShortLink(requestParam);
         return Results.success();
+    }
+
+    /**
+     * 从URL中提取网站元数据
+     */
+    @Operation(summary = "从URL中提取网站元数据")
+    @GetMapping("/api/short-link/admin/v1/metadata")
+    public Result<WebsiteMetadataRespDTO> getWebsiteMetadata(@RequestParam String url) {
+        return linkRemoteService.fetchMetadata(url);
     }
 }

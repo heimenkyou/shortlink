@@ -7,6 +7,7 @@ import cn.luowb.shortlink.admin.remote.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
+import cn.luowb.shortlink.admin.remote.dto.resp.WebsiteMetadataRespDTO;
 import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;
@@ -59,5 +60,11 @@ public interface LinkRemoteService {
     default Result<Void> updateShortLink(LinkUpdateReqDTO requestParam) {
         HttpUtil.post("http://localhost:8001/api/short-link/v1/update", JSON.toJSONString(requestParam));
         return Results.success(null);
+    }
+
+    default Result<WebsiteMetadataRespDTO> fetchMetadata(String url) {
+        String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/metadata", Map.of("url", url));
+        return JSON.parseObject(resultPageJson, new TypeReference<>() {
+        });
     }
 }
