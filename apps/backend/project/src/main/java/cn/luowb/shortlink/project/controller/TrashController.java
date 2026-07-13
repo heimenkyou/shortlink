@@ -4,7 +4,7 @@ package cn.luowb.shortlink.project.controller;
 import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;
-import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
+import cn.luowb.shortlink.project.dto.req.TrashLinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashSaveReqDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.service.TrashService;
@@ -41,7 +41,7 @@ public class TrashController {
      */
     @Operation(summary = "分页查询回收站中的链接")
     @GetMapping("/api/short-link/v1/trash/page")
-    public Result<PageResult<LinkPageRespDTO>> pageTrashLink(@Valid LinkPageReqDTO requestParam) {
+    public Result<PageResult<LinkPageRespDTO>> pageTrashLink(@Valid TrashLinkPageReqDTO requestParam) {
         return Results.success(trashService.pageTrashLink(requestParam));
     }
 }

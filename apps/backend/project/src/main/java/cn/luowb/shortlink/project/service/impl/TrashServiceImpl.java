@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
-import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
+import cn.luowb.shortlink.project.dto.req.TrashLinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashSaveReqDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.service.TrashService;
@@ -26,6 +26,7 @@ public class TrashServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements
 
     /**
      * 将链接移动到回收站
+     *
      * @param requestParam 请求参数
      */
     @Override
@@ -45,18 +46,19 @@ public class TrashServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements
 
     /**
      * 分页查询回收站中的链接
+     *
      * @param requestParam 请求参数
      * @return 分页结果
      */
     @Override
-    public PageResult<LinkPageRespDTO> pageTrashLink(LinkPageReqDTO requestParam) {
+    public PageResult<LinkPageRespDTO> pageTrashLink(TrashLinkPageReqDTO requestParam) {
         IPage<LinkDO> page = new Page<>(requestParam.getCurrent(), requestParam.getSize());
 
         LambdaQueryWrapper<LinkDO> wrapper = Wrappers.lambdaQuery(LinkDO.class)
-                .eq(LinkDO::getGid, requestParam.getGid())
+                .in(LinkDO::getGid, requestParam.getGidList())
                 .eq(LinkDO::getEnableStatus, 1)
                 .eq(LinkDO::getDelFlag, 0)
-                .orderByDesc(LinkDO::getCreateTime);
+                .orderByDesc(LinkDO::getUpdateTime);
 
         IPage<LinkDO> resultPage = this.page(page, wrapper);
 

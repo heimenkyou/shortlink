@@ -1,10 +1,7 @@
 package cn.luowb.shortlink.admin.remote.dto;
 
 import cn.hutool.http.HttpUtil;
-import cn.luowb.shortlink.admin.remote.dto.req.LinkCreateReqDTO;
-import cn.luowb.shortlink.admin.remote.dto.req.LinkPageReqDTO;
-import cn.luowb.shortlink.admin.remote.dto.req.LinkUpdateReqDTO;
-import cn.luowb.shortlink.admin.remote.dto.req.TrashSaveReqDTO;
+import cn.luowb.shortlink.admin.remote.dto.req.*;
 import cn.luowb.shortlink.admin.remote.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
@@ -14,6 +11,8 @@ import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
+import jakarta.validation.Valid;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -86,11 +85,11 @@ public interface LinkRemoteService {
      * @param requestParam 分页查询短链接请求参数
      * @return 分页查询短链接响应
      */
-    default Result<PageResult<LinkPageRespDTO>> pageTrashLink(LinkPageReqDTO requestParam) {
+    default Result<PageResult<LinkPageRespDTO>> pageTrashLink(@Valid @MonotonicNonNull TrashLinkPageReqDTO requestParam) {
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("current", requestParam.getCurrent());
         requestMap.put("size", requestParam.getSize());
-        requestMap.put("gid", requestParam.getGid());
+        requestMap.put("gidList", requestParam.getGidList());
         String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/trash/page", requestMap);
         return JSON.parseObject(resultPageJson, new TypeReference<>() {
         });
