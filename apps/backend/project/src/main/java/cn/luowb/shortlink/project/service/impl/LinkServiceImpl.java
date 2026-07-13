@@ -127,6 +127,12 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         return originUrl;
     }
 
+    /**
+     * 创建短链接
+     *
+     * @param requestParam 创建短链接请求参数
+     * @return 创建短链接响应参数
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public LinkCreateRespDTO createShortLink(LinkCreateReqDTO requestParam) {
@@ -162,6 +168,12 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         return BeanUtil.toBean(linkDO, LinkCreateRespDTO.class);
     }
 
+    /**
+     * 分页查询短链接
+     *
+     * @param requestParam 分页查询短链接请求参数
+     * @return 分页查询短链接结果集
+     */
     @Override
     public PageResult<LinkPageRespDTO> pageShortLink(LinkPageReqDTO requestParam) {
         IPage<LinkDO> page = new Page<>(requestParam.getCurrent(), requestParam.getSize());
