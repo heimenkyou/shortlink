@@ -5,6 +5,7 @@ import cn.luowb.shortlink.common.convention.exception.ClientException;
 import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
+import cn.luowb.shortlink.project.dto.req.TrashDeleteReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashLinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashRecoverReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashSaveReqDTO;
@@ -96,5 +97,29 @@ public class TrashServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements
         String cacheKey = GOTO_SHORT_LINK_KEY.getKey(requestParam.getFullShortUrl());
         long cacheTime = LinkUtil.getCacheTime(linkDO.getValidDate());
         stringRedisTemplate.opsForValue().set(cacheKey, linkDO.getOriginUrl(), cacheTime, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 从回收站中删除链接
+     *
+     * @param requestParam 请求参数
+     */
+    @Override
+    public void deleteTrash(TrashDeleteReqDTO requestParam) {
+        LambdaQueryWrapper<LinkDO> wrapper = Wrappers.lambdaQuery(LinkDO.class)
+                .eq(LinkDO::getFullShortUrl, requestParam.getFullShortUrl())
+                .eq(LinkDO::getGid, requestParam.getGid())
+                .eq(LinkDO::getEnableStatus, 1)
+                .eq(LinkDO::getDelFlag, 0);
+        LinkDO linkDO = this.getOne(wrapper);
+        if (linkDO == null) {
+            throw new ClientException("链接不存在");
+        }
+        LinkDO updateDO = LinkDO.builder()
+                .delFlag(1)
+                .build();
+        this.update(updateDO, wrapper);
+        // 删除可能的空值缓存
+        stringRedisTemplate.delete(GOTO_SHORT_LINK_KEY.getKey(requestParam.getFullShortUrl()));
     }
 }

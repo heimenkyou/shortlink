@@ -2,6 +2,7 @@ package cn.luowb.shortlink.project.service;
 
 import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
+import cn.luowb.shortlink.project.dto.req.TrashDeleteReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashLinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashRecoverReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashSaveReqDTO;
@@ -28,4 +29,9 @@ public interface TrashService extends IService<LinkDO> {
      */
     void recoverTrash(TrashRecoverReqDTO requestParam);
 
+    /**
+     * 从回收站中删除链接
+     * @param requestParam 请求参数
+     */
+    void deleteTrash(TrashDeleteReqDTO requestParam);
 }

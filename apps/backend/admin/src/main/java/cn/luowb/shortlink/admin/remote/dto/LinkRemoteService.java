@@ -106,4 +106,13 @@ public interface LinkRemoteService {
         return JSON.parseObject(resultPageJson, new TypeReference<>() {
         });
     }
+
+    /**
+     * 从回收站删除链接
+     *
+     * @param requestParam 从回收站删除链接请求参数
+     */
+    default void deleteTrash(TrashDeleteReqDTO requestParam) {
+        HttpUtil.post("http://localhost:8001/api/short-link/v1/trash/delete", JSON.toJSONString(requestParam));
+    }
 }

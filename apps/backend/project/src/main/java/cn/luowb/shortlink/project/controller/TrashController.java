@@ -4,6 +4,7 @@ package cn.luowb.shortlink.project.controller;
 import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;
+import cn.luowb.shortlink.project.dto.req.TrashDeleteReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashLinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashRecoverReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashSaveReqDTO;
@@ -48,6 +49,7 @@ public class TrashController {
 
     /**
      * 从回收站中恢复链接
+     *
      * @param requestParam 恢复链接的请求参数
      * @return 操作结果
      */
@@ -55,6 +57,16 @@ public class TrashController {
     @Operation(summary = "从回收站中恢复链接")
     public Result<Void> recover(@RequestBody TrashRecoverReqDTO requestParam) {
         trashService.recoverTrash(requestParam);
+        return Results.success();
+    }
+
+    /**
+     * 从回收站删除链接
+     */
+    @PostMapping("/api/short-link/v1/trash/delete")
+    @Operation(summary = "从回收站删除链接")
+    public Result<Void> delete(@RequestBody TrashDeleteReqDTO requestParam) {
+        trashService.deleteTrash(requestParam);
         return Results.success();
     }
 }
