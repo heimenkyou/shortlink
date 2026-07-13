@@ -79,4 +79,20 @@ public interface LinkRemoteService {
         return JSON.parseObject(resultPageJson, new TypeReference<>() {
         });
     }
+
+    /**
+     * 分页查询短链接
+     *
+     * @param requestParam 分页查询短链接请求参数
+     * @return 分页查询短链接响应
+     */
+    default Result<PageResult<LinkPageRespDTO>> pageTrashLink(LinkPageReqDTO requestParam) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("current", requestParam.getCurrent());
+        requestMap.put("size", requestParam.getSize());
+        requestMap.put("gid", requestParam.getGid());
+        String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/trash/page", requestMap);
+        return JSON.parseObject(resultPageJson, new TypeReference<>() {
+        });
+    }
 }

@@ -2,11 +2,16 @@ package cn.luowb.shortlink.admin.controller;
 
 
 import cn.luowb.shortlink.admin.remote.dto.LinkRemoteService;
+import cn.luowb.shortlink.admin.remote.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.req.TrashSaveReqDTO;
+import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.common.convention.result.Result;
+import cn.luowb.shortlink.common.dto.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,5 +34,14 @@ public class TrashController {
     @Operation(summary = "将链接移动到回收站")
     public Result<Void> save(@RequestBody TrashSaveReqDTO requestParam) {
         return linkRemoteService.saveTrash(requestParam);
+    }
+
+    /**
+     * 分页查询短链接
+     */
+    @Operation(summary = "分页查询回收站中的链接")
+    @GetMapping("/api/short-link/admin/v1/trash/page")
+    public Result<PageResult<LinkPageRespDTO>> pageTrashLink(@Valid LinkPageReqDTO requestParam) {
+        return linkRemoteService.pageTrashLink(requestParam);
     }
 }
