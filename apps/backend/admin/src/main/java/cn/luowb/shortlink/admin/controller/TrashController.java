@@ -3,6 +3,7 @@ package cn.luowb.shortlink.admin.controller;
 
 import cn.luowb.shortlink.admin.remote.dto.LinkRemoteService;
 import cn.luowb.shortlink.admin.remote.dto.req.TrashLinkPageReqDTO;
+import cn.luowb.shortlink.admin.remote.dto.req.TrashRecoverReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.req.TrashSaveReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.admin.service.TrashService;
@@ -44,5 +45,17 @@ public class TrashController {
     @GetMapping("/api/short-link/admin/v1/trash/page")
     public Result<PageResult<LinkPageRespDTO>> pageTrashLink(TrashLinkPageReqDTO requestParam) {
         return trashService.pageTrashLink(requestParam);
+    }
+
+    /**
+     * 从回收站中恢复链接
+     *
+     * @param requestParam 恢复链接的请求参数
+     * @return 操作结果
+     */
+    @PostMapping("/api/short-link/admin/v1/trash/recover")
+    @Operation(summary = "从回收站中恢复链接")
+    public Result<Void> recover(@RequestBody TrashRecoverReqDTO requestParam) {
+        return linkRemoteService.recoverTrash(requestParam);
     }
 }

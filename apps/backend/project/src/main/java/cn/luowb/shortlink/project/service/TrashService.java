@@ -3,6 +3,7 @@ package cn.luowb.shortlink.project.service;
 import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dto.req.TrashLinkPageReqDTO;
+import cn.luowb.shortlink.project.dto.req.TrashRecoverReqDTO;
 import cn.luowb.shortlink.project.dto.req.TrashSaveReqDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -20,4 +21,11 @@ public interface TrashService extends IService<LinkDO> {
      * @return 分页结果
      */
     PageResult<LinkPageRespDTO> pageTrashLink(TrashLinkPageReqDTO requestParam);
+
+    /**
+     * 从回收站中恢复链接
+     * @param requestParam 请求参数
+     */
+    void recoverTrash(TrashRecoverReqDTO requestParam);
+
 }

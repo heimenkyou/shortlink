@@ -94,4 +94,16 @@ public interface LinkRemoteService {
         return JSON.parseObject(resultPageJson, new TypeReference<>() {
         });
     }
+
+    /**
+     * 从回收站中恢复链接
+     *
+     * @param requestParam 从回收站中恢复链接请求参数
+     * @return 从回收站中恢复链接响应
+     */
+    default Result<Void> recoverTrash(TrashRecoverReqDTO requestParam) {
+        String resultPageJson = HttpUtil.post("http://localhost:8001/api/short-link/v1/trash/recover", JSON.toJSONString(requestParam));
+        return JSON.parseObject(resultPageJson, new TypeReference<>() {
+        });
+    }
 }

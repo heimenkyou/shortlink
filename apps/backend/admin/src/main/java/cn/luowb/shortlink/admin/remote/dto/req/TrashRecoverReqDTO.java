@@ -1,11 +1,11 @@
-package cn.luowb.shortlink.project.dto.req;
+package cn.luowb.shortlink.admin.remote.dto.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-@Schema(description = "将链接移动到回收站请求参数")
 @Data
-public class TrashSaveReqDTO {
+@Schema(description = "从回收站中恢复链接的请求参数")
+public class TrashRecoverReqDTO {
     /**
      * 分组标识
      */
