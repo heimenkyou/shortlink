@@ -14,6 +14,7 @@ import cn.luowb.shortlink.project.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -76,7 +77,7 @@ public class LinkController {
      */
     @Operation(summary = "分页查询短链接")
     @GetMapping("/api/short-link/v1/page")
-    public Result<PageResult<LinkPageRespDTO>> pageShortLink(LinkPageReqDTO requestParam) {
+    public Result<PageResult<LinkPageRespDTO>> pageShortLink(@Valid LinkPageReqDTO requestParam) {
         return Results.success(linkService.pageShortLink(requestParam));
     }
 
