@@ -30,7 +30,7 @@
         <fastjson2.version>2.0.36</fastjson2.version>
         <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <dozer-core.version>6.5.2</dozer-core.version>
-        <hutool-all.version>5.8.20</hutool-all.version>
+        <hutool-all.version>5.8.47</hutool-all.version>
         <redisson.version>3.21.3</redisson.version>
         <guava.version>30.0-jre</guava.version>
         <knife4j.version>4.5.0</knife4j.version>

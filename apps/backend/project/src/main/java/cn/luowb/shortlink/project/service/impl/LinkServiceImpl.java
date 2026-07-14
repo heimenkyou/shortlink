@@ -1,7 +1,10 @@
 package cn.luowb.shortlink.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.luowb.shortlink.common.convention.ServiceException;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
 import cn.luowb.shortlink.common.dto.PageResult;
@@ -28,7 +31,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RBloomFilter;
@@ -41,10 +46,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.GOTO_SHORT_LINK_KEY;
-import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.LOCK_GOTO_SHORT_LINK_KEY;
+import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.*;
 
 /**
  * 短链接服务实现类
@@ -66,16 +71,17 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
      *
      * @param shortUrl 短链接后缀
      * @param request  HTTP请求
+     * @param response HTTP响应
      * @return 原始链接
      */
     @Override
-    public String resolveShortUrl(String shortUrl, HttpServletRequest request) {
+    public String resolveShortUrl(String shortUrl, HttpServletRequest request, HttpServletResponse response) {
         String domain = request.getServerName();
         String fullShortUrl = domain + "/" + shortUrl;
         // 解析短链接
         String originUrl = resolve(fullShortUrl, request);
         // 统计访问数据
-        recordStats(fullShortUrl, request);
+        recordStats(fullShortUrl, request, response);
         return originUrl;
     }
 
@@ -148,8 +154,35 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     /**
      * 统计访问数据
      */
-    private void recordStats(String fullShortUrl, HttpServletRequest request) {
+    private void recordStats(String fullShortUrl, HttpServletRequest request, HttpServletResponse response) {
         // TODO 以后改成异步统计
+        // 获取或生成 UV 标识
+        String uvFlag = null;
+        Cookie[] cookies = request.getCookies();
+        if (ArrayUtil.isNotEmpty(cookies)) {
+            for (Cookie cookie : cookies) {
+                if ("uvFlag".equals(cookie.getName())) {
+                    uvFlag = cookie.getValue();
+                    // 说明是老用户了
+                    break;
+                }
+            }
+        }
+        if (StrUtil.isBlank(uvFlag)) {
+            uvFlag = IdUtil.fastSimpleUUID();
+            Cookie uvFlagCookie = new Cookie("uvFlag", uvFlag);
+            uvFlagCookie.setMaxAge(60 * 60 * 24 * 30); // 30 天
+            uvFlagCookie.setPath("/");
+            response.addCookie(uvFlagCookie);
+        }
+        // 判断是否是新用户
+        Long uvAdded = stringRedisTemplate.opsForSet().add(LINK_ACCESS_STATS_UV_KEY.getKey(fullShortUrl), uvFlag);
+        boolean uvFirst = Objects.equals(uvAdded, 1L);
+        // 判断是否是新 IP
+        String ip = JakartaServletUtil.getClientIP(request);
+        Long uipAdded = stringRedisTemplate.opsForSet().add(LINK_ACCESS_STATS_UIP_KEY.getKey(fullShortUrl), ip);
+        boolean uipFirst = Objects.equals(uipAdded, 1L);
+
         // 获取当前时间信息
         LocalDateTime now = LocalDateTime.now();
         int hour = now.getHour();
@@ -168,9 +201,9 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .date(now.toLocalDate())
                 .hour(hour)
                 .weekday(weekday)
-                .uv(1)
                 .pv(1)
-                .uip(1)
+                .uv(uvFirst ? 1 : 0)
+                .uip(uipFirst ? 1 : 0)
                 .fullShortUrl(fullShortUrl)
                 .gid(gid)
                 .build();

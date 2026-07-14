@@ -14,6 +14,7 @@ import cn.luowb.shortlink.project.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,10 +40,10 @@ public class LinkController {
      */
     @Operation(summary = "短链接跳转")
     @GetMapping("/{shortUrl:[a-zA-Z0-9]{6}}")
-    public ResponseEntity<Void> redirect(@PathVariable String shortUrl, HttpServletRequest request) {
+    public ResponseEntity<Void> redirect(@PathVariable String shortUrl, HttpServletRequest request, HttpServletResponse response) {
         String longUrl;
         try {
-            longUrl = linkService.resolveShortUrl(shortUrl, request);
+            longUrl = linkService.resolveShortUrl(shortUrl, request, response);
         } catch (ClientException e) {
             log.info("resolve short url failed, shortUrl: {}, msg: {}", shortUrl, e.getMessage());
             // 短链接不存在，跳转到404页面

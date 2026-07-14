@@ -15,7 +15,16 @@ public enum RedisCacheKeyEnum {
     /**
      * 短链接跳转锁前缀 Key
      */
-    LOCK_GOTO_SHORT_LINK_KEY("short-link:lock_goto_%s");
+    LOCK_GOTO_SHORT_LINK_KEY("short-link:lock_goto_%s"),
+
+    /**
+     * 短链接访问统计独立访问数 Key
+     */
+    LINK_ACCESS_STATS_UV_KEY("short-link:stats:uv:%s"),
+    /**
+     * 短链接访问统计独立IP数 Key
+     */
+    LINK_ACCESS_STATS_UIP_KEY("short-link:stats:uip:%s");
 
     private final String template;
 
