@@ -5,8 +5,10 @@ import cn.hutool.core.util.IdUtil;
 import cn.luowb.shortlink.common.convention.ServiceException;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
 import cn.luowb.shortlink.common.dto.PageResult;
+import cn.luowb.shortlink.project.dao.entity.LinkAccessStatsDO;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dao.entity.LinkGotoDO;
+import cn.luowb.shortlink.project.dao.mapper.LinkAccessStatsMapper;
 import cn.luowb.shortlink.project.dao.mapper.LinkGotoMapper;
 import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
@@ -57,9 +59,10 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final StringRedisTemplate stringRedisTemplate;
     private final RedissonClient redissonClient;
     private final UrlMetadataService urlMetadataService;
+    private final LinkAccessStatsMapper linkAccessStatsMapper;
 
     /**
-     * 解析短链接
+     * 解析短链接并统计访问数据
      *
      * @param shortUrl 短链接后缀
      * @param request  HTTP请求
@@ -69,6 +72,21 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     public String resolveShortUrl(String shortUrl, HttpServletRequest request) {
         String domain = request.getServerName();
         String fullShortUrl = domain + "/" + shortUrl;
+        // 解析短链接
+        String originUrl = resolve(fullShortUrl, request);
+        // 统计访问数据
+        recordStats(fullShortUrl, request);
+        return originUrl;
+    }
+
+    /**
+     * 解析短链接
+     *
+     * @param fullShortUrl 完整短链接
+     * @param request      HTTP请求
+     * @return 原始链接
+     */
+    private String resolve(String fullShortUrl, HttpServletRequest request) {
         // 在 redis 中查缓存，快速返回大部分正常请求
         String cacheKey = GOTO_SHORT_LINK_KEY.getKey(fullShortUrl);
         String cachedUrl = stringRedisTemplate.opsForValue().get(cacheKey);
@@ -125,6 +143,38 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
             lock.unlock();
         }
         return originUrl;
+    }
+
+    /**
+     * 统计访问数据
+     */
+    private void recordStats(String fullShortUrl, HttpServletRequest request) {
+        // TODO 以后改成异步统计
+        // 获取当前时间信息
+        LocalDateTime now = LocalDateTime.now();
+        int hour = now.getHour();
+        int weekday = now.getDayOfWeek().getValue();
+        // 获取 gid
+        LinkGotoDO gotoDO = linkGotoMapper.selectOne(Wrappers.lambdaQuery(LinkGotoDO.class)
+                .eq(LinkGotoDO::getFullShortUrl, fullShortUrl));
+        if (gotoDO == null) {
+            // 不应当出现这种情况
+            log.error("短链接不存在，无法统计访问数据，{}", fullShortUrl);
+            return;
+        }
+        String gid = gotoDO.getGid();
+        // 统计访问数据
+        LinkAccessStatsDO statsDO = LinkAccessStatsDO.builder()
+                .date(now.toLocalDate())
+                .hour(hour)
+                .weekday(weekday)
+                .uv(1)
+                .pv(1)
+                .uip(1)
+                .fullShortUrl(fullShortUrl)
+                .gid(gid)
+                .build();
+        linkAccessStatsMapper.recordStatus(statsDO);
     }
 
     /**
