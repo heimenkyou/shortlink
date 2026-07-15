@@ -42,7 +42,7 @@ CREATE TABLE `t_link_locale_stats`
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci COMMENT '短链接区域统计表';
 
-
+-- 短链接操作系统统计表
 CREATE TABLE `t_link_os_stats`
 (
     `id`             bigint   NOT NULL AUTO_INCREMENT COMMENT 'ID',
