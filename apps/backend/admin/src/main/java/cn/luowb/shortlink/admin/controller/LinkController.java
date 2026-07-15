@@ -6,6 +6,7 @@ import cn.luowb.shortlink.admin.remote.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
+import cn.luowb.shortlink.admin.remote.dto.resp.HighFrequencyIpRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.WebsiteMetadataRespDTO;
 import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.convention.result.Results;
@@ -13,6 +14,8 @@ import cn.luowb.shortlink.common.dto.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 短链接后管管理控制器
@@ -59,5 +62,14 @@ public class LinkController {
     @GetMapping("/api/short-link/admin/v1/metadata")
     public Result<WebsiteMetadataRespDTO> getWebsiteMetadata(@RequestParam String url) {
         return linkRemoteService.fetchMetadata(url);
+    }
+
+    /**
+     * 查询高频访问 IP
+     */
+    @Operation(summary = "查询高频访问 IP")
+    @GetMapping("/api/short-link/admin/v1/high-frequency-ip")
+    public Result<List<HighFrequencyIpRespDTO>> listHighFrequencyIp() {
+        return linkRemoteService.listHighFrequencyIp();
     }
 }

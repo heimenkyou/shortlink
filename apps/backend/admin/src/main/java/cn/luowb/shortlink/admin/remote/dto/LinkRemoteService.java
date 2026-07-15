@@ -3,6 +3,7 @@ package cn.luowb.shortlink.admin.remote.dto;
 import cn.hutool.http.HttpUtil;
 import cn.luowb.shortlink.admin.remote.dto.req.*;
 import cn.luowb.shortlink.admin.remote.dto.resp.GroupCountQueryRespDTO;
+import cn.luowb.shortlink.admin.remote.dto.resp.HighFrequencyIpRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.WebsiteMetadataRespDTO;
@@ -54,6 +55,17 @@ public interface LinkRemoteService {
         requestMap.put("gidList", gidList);
         String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/admin/v1/group/count", requestMap);
         return JSON.parseObject(resultPageJson, new TypeReference<>() {
+        });
+    }
+
+    /**
+     * 查询访问次数最高的 IP
+     *
+     * @return 高频访问 IP 列表
+     */
+    default Result<List<HighFrequencyIpRespDTO>> listHighFrequencyIp() {
+        String resultJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/high-frequency-ip");
+        return JSON.parseObject(resultJson, new TypeReference<>() {
         });
     }
 

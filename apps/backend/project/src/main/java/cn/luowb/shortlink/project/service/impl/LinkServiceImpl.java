@@ -15,6 +15,7 @@ import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
+import cn.luowb.shortlink.project.dto.resp.HighFrequencyIpRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.dto.resp.WebsiteMetadataRespDTO;
@@ -66,8 +67,19 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final LinkLocaleStatsMapper linkLocaleStatsMapper;
     private final LinkOsStatsMapper linkOsStatsMapper;
     private final LinkBrowserStatsMapper linkBrowserStatsMapper;
+    private final LinkAccessLogsMapper linkAccessLogsMapper;
 
     private final IpSearcher ipSearcher;
+
+    /**
+     * 查询访问次数最高的 IP
+     *
+     * @return 高频访问 IP 列表
+     */
+    @Override
+    public List<HighFrequencyIpRespDTO> listHighFrequencyIp() {
+        return linkAccessLogsMapper.listHighFrequencyIp();
+    }
 
     /**
      * 解析短链接并统计访问数据
@@ -245,6 +257,16 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .browser(browser)
                 .build();
         linkBrowserStatsMapper.recordStatus(browserStats);
+        // 记录访问日志
+        LinkAccessLogsDO accessLog = LinkAccessLogsDO.builder()
+                .fullShortUrl(fullShortUrl)
+                .gid(gid)
+                .user(uvFlag)
+                .browser(browser)
+                .os(os)
+                .ip(ip)
+                .build();
+        linkAccessLogsMapper.insert(accessLog);
     }
 
     /**
