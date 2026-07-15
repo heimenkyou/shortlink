@@ -9,14 +9,8 @@ import cn.luowb.shortlink.common.convention.ServiceException;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
 import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.component.IpSearcher;
-import cn.luowb.shortlink.project.dao.entity.LinkAccessStatsDO;
-import cn.luowb.shortlink.project.dao.entity.LinkDO;
-import cn.luowb.shortlink.project.dao.entity.LinkGotoDO;
-import cn.luowb.shortlink.project.dao.entity.LinkLocaleStatsDO;
-import cn.luowb.shortlink.project.dao.mapper.LinkAccessStatsMapper;
-import cn.luowb.shortlink.project.dao.mapper.LinkGotoMapper;
-import cn.luowb.shortlink.project.dao.mapper.LinkLocaleStatsMapper;
-import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
+import cn.luowb.shortlink.project.dao.entity.*;
+import cn.luowb.shortlink.project.dao.mapper.*;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
@@ -28,6 +22,7 @@ import cn.luowb.shortlink.project.service.LinkService;
 import cn.luowb.shortlink.project.service.UrlMetadataService;
 import cn.luowb.shortlink.project.util.HashUtil;
 import cn.luowb.shortlink.project.util.LinkUtil;
+import cn.luowb.shortlink.project.util.UserAgentExtractor;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -69,6 +64,8 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final UrlMetadataService urlMetadataService;
     private final LinkAccessStatsMapper linkAccessStatsMapper;
     private final LinkLocaleStatsMapper linkLocaleStatsMapper;
+    private final LinkOsStatsMapper linkOsStatsMapper;
+
     private final IpSearcher ipSearcher;
 
     /**
@@ -227,6 +224,16 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .country(ipInfo.getCountry())
                 .build();
         linkLocaleStatsMapper.recordStatus(stats);
+        // 统计操作系统数据
+        String os = UserAgentExtractor.extractOs(request);
+        LinkOsStatsDO osStats = LinkOsStatsDO.builder()
+                .fullShortUrl(fullShortUrl)
+                .gid(gid)
+                .date(now.toLocalDate())
+                .cnt(1)
+                .os(os)
+                .build();
+        linkOsStatsMapper.recordStatus(osStats);
     }
 
     /**
