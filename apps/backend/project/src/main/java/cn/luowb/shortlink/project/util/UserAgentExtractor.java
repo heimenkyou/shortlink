@@ -122,4 +122,23 @@ public class UserAgentExtractor {
         }
         return browserName;
     }
+
+    /**
+     * 从 HTTP 请求中提取并清洗客户端设备类型。
+     *
+     * @param request HTTP 请求对象
+     * @return 规范化后的设备类型（Mobile 或 PC）
+     */
+    public static String extractDevice(HttpServletRequest request) {
+        if (request == null) {
+            return "PC";
+        }
+
+        UserAgent ua = UserAgentUtil.parse(request.getHeader("User-Agent"));
+        if (ua == null) {
+            return "PC";
+        }
+
+        return ua.isMobile() ? "Mobile" : "PC";
+    }
 }

@@ -43,6 +43,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -68,6 +69,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final LinkOsStatsMapper linkOsStatsMapper;
     private final LinkBrowserStatsMapper linkBrowserStatsMapper;
     private final LinkAccessLogsMapper linkAccessLogsMapper;
+    private final LinkDeviceStatsMapper linkDeviceStatsMapper;
 
     private final IpSearcher ipSearcher;
 
@@ -200,6 +202,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
 
         // 获取当前时间信息
         LocalDateTime now = LocalDateTime.now();
+        LocalDate nowDate = now.toLocalDate();
         int hour = now.getHour();
         int weekday = now.getDayOfWeek().getValue();
         // 获取 gid
@@ -213,7 +216,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         String gid = gotoDO.getGid();
         // 统计访问数据
         LinkAccessStatsDO statsDO = LinkAccessStatsDO.builder()
-                .date(now.toLocalDate())
+                .date(nowDate)
                 .hour(hour)
                 .weekday(weekday)
                 .pv(1)
@@ -229,7 +232,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .fullShortUrl(fullShortUrl)
                 .province(ipInfo.getProvince())
                 .gid(gid)
-                .date(now.toLocalDate())
+                .date(nowDate)
                 .cnt(1)
                 .province(ipInfo.getProvince())
                 .city(ipInfo.getCity())
@@ -242,7 +245,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         LinkOsStatsDO osStats = LinkOsStatsDO.builder()
                 .fullShortUrl(fullShortUrl)
                 .gid(gid)
-                .date(now.toLocalDate())
+                .date(nowDate)
                 .cnt(1)
                 .os(os)
                 .build();
@@ -252,7 +255,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         LinkBrowserStatsDO browserStats = LinkBrowserStatsDO.builder()
                 .fullShortUrl(fullShortUrl)
                 .gid(gid)
-                .date(now.toLocalDate())
+                .date(nowDate)
                 .cnt(1)
                 .browser(browser)
                 .build();
@@ -267,6 +270,16 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .ip(ip)
                 .build();
         linkAccessLogsMapper.insert(accessLog);
+        // 统计设备数据
+        String device = UserAgentExtractor.extractDevice(request);
+        LinkDeviceStatsDO deviceStats = LinkDeviceStatsDO.builder()
+                .fullShortUrl(fullShortUrl)
+                .gid(gid)
+                .date(nowDate)
+                .cnt(1)
+                .device(device)
+                .build();
+        linkDeviceStatsMapper.recordStatus(deviceStats);
     }
 
     /**
