@@ -65,6 +65,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final LinkAccessStatsMapper linkAccessStatsMapper;
     private final LinkLocaleStatsMapper linkLocaleStatsMapper;
     private final LinkOsStatsMapper linkOsStatsMapper;
+    private final LinkBrowserStatsMapper linkBrowserStatsMapper;
 
     private final IpSearcher ipSearcher;
 
@@ -234,6 +235,16 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .os(os)
                 .build();
         linkOsStatsMapper.recordStatus(osStats);
+        // 统计浏览器数据
+        String browser = UserAgentExtractor.extractBrowser(request);
+        LinkBrowserStatsDO browserStats = LinkBrowserStatsDO.builder()
+                .fullShortUrl(fullShortUrl)
+                .gid(gid)
+                .date(now.toLocalDate())
+                .cnt(1)
+                .browser(browser)
+                .build();
+        linkBrowserStatsMapper.recordStatus(browserStats);
     }
 
     /**
