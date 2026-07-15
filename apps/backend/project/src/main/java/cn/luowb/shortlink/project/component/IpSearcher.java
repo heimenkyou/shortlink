@@ -74,13 +74,17 @@ public class IpSearcher {
             String city = parts.length > 2 ? parts[2] : "";
             String isp = parts.length > 3 ? parts[3] : "";
 
+            String cleanCountry = "0".equals(country) ? "" : country;
+            String cleanProvince = "0".equals(province) ? "" : province;
+            String cleanCity = "0".equals(city) ? "" : city;
+            String cleanIsp = "0".equals(isp) ? "" : isp;
             String adcodePlaceholder = "0".equals(city) ? "" : city;
             return new IpInfo(
-                    "0".equals(country) ? "" : country,
-                    "0".equals(province) ? "" : province,
-                    "0".equals(city) ? "" : city,
-                    "0".equals(isp) ? "" : isp,
-                    adcodePlaceholder // 用城市名称作为临时的 adcode 占位
+                    cleanCountry,
+                    cleanProvince,
+                    cleanCity,
+                    cleanIsp,
+                    adcodePlaceholder // 用城市名称作为临时的 adcode 占位，
             );
         } catch (ServiceException se) {
             throw se;

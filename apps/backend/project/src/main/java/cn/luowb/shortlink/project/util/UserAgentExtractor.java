@@ -1,5 +1,7 @@
 package cn.luowb.shortlink.project.util;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -140,5 +142,34 @@ public class UserAgentExtractor {
         }
 
         return ua.isMobile() ? "Mobile" : "PC";
+    }
+
+    /**
+     * 【糊弄鬼算法】估算用户的网络接入类型。
+     *
+     * @param request HTTP 请求对象
+     * @return 估算的网络类型（WIFI 或 移动网络）
+     */
+    public static String estimateNetwork(HttpServletRequest request) {
+        if (request == null) {
+            return DEFAULT_VALUE;
+        }
+        UserAgent ua = UserAgentUtil.parse(request.getHeader("User-Agent"));
+        if (ua == null) {
+            return DEFAULT_VALUE;
+        }
+        // PC 端设备直接判定为WIFI
+        if (!ua.isMobile()) {
+            return "WIFI";
+        }
+        // 如果没 IP，默认为 WIFI
+        String actualIp = JakartaServletUtil.getClientIP(request);
+        if (StrUtil.isBlank(actualIp)) {
+            return "WIFI";
+        }
+        // 3. 移动端，开始糊弄
+        // 对 IP 进行哈希取模分流，保证单用户体验幂等，宏观数据各占 50%
+        int hash = Math.abs(actualIp.hashCode());
+        return (hash % 2 == 0) ? "WIFI" : "移动网络";
     }
 }

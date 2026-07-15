@@ -14,11 +14,7 @@ import cn.luowb.shortlink.project.dao.mapper.*;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
-import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
-import cn.luowb.shortlink.project.dto.resp.HighFrequencyIpRespDTO;
-import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
-import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
-import cn.luowb.shortlink.project.dto.resp.WebsiteMetadataRespDTO;
+import cn.luowb.shortlink.project.dto.resp.*;
 import cn.luowb.shortlink.project.service.LinkService;
 import cn.luowb.shortlink.project.service.UrlMetadataService;
 import cn.luowb.shortlink.project.util.HashUtil;
@@ -70,6 +66,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final LinkBrowserStatsMapper linkBrowserStatsMapper;
     private final LinkAccessLogsMapper linkAccessLogsMapper;
     private final LinkDeviceStatsMapper linkDeviceStatsMapper;
+    private final LinkNetworkStatsMapper linkNetworkStatsMapper;
 
     private final IpSearcher ipSearcher;
 
@@ -280,6 +277,16 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .device(device)
                 .build();
         linkDeviceStatsMapper.recordStatus(deviceStats);
+        // 统计网络数据
+        String network = UserAgentExtractor.estimateNetwork(request); // 糊弄一下得了
+        LinkNetworkStatsDO networkStats = LinkNetworkStatsDO.builder()
+                .fullShortUrl(fullShortUrl)
+                .gid(gid)
+                .date(nowDate)
+                .cnt(1)
+                .network(network)
+                .build();
+        linkNetworkStatsMapper.recordStatus(networkStats);
     }
 
     /**
