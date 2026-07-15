@@ -38,6 +38,7 @@
         <sa-token.version>1.45.0</sa-token.version>
         <project.version>1.0-SNAPSHOT</project.version>
         <jsoup.version>1.17.2</jsoup.version>
+        <ip2region.version>3.3.7</ip2region.version>
     </properties>
 
     <dependencies>
@@ -157,6 +158,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-validation</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <!-- ip2region 地址解析 -->
+            <dependency>
+                <groupId>org.lionsoul</groupId>
+                <artifactId>ip2region</artifactId>
+                <version>${ip2region.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

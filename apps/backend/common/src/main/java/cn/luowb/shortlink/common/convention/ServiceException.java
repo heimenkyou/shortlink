@@ -27,6 +27,10 @@ public class ServiceException extends AbstractException {
         super(Optional.ofNullable(message).orElse(errorCode.message()), throwable, errorCode);
     }
 
+    public ServiceException(String message, Throwable throwable) {
+        this(message, throwable, BaseErrorCode.SERVICE_ERROR);
+    }
+
     @Override
     public String toString() {
         return "ServiceException{" +

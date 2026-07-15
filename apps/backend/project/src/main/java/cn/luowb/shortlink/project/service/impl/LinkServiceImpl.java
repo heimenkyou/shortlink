@@ -8,11 +8,14 @@ import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.luowb.shortlink.common.convention.ServiceException;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
 import cn.luowb.shortlink.common.dto.PageResult;
+import cn.luowb.shortlink.project.component.IpSearcher;
 import cn.luowb.shortlink.project.dao.entity.LinkAccessStatsDO;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dao.entity.LinkGotoDO;
+import cn.luowb.shortlink.project.dao.entity.LinkLocaleStatsDO;
 import cn.luowb.shortlink.project.dao.mapper.LinkAccessStatsMapper;
 import cn.luowb.shortlink.project.dao.mapper.LinkGotoMapper;
+import cn.luowb.shortlink.project.dao.mapper.LinkLocaleStatsMapper;
 import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
@@ -65,6 +68,8 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final RedissonClient redissonClient;
     private final UrlMetadataService urlMetadataService;
     private final LinkAccessStatsMapper linkAccessStatsMapper;
+    private final LinkLocaleStatsMapper linkLocaleStatsMapper;
+    private final IpSearcher ipSearcher;
 
     /**
      * 解析短链接并统计访问数据
@@ -80,7 +85,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         String fullShortUrl = domain + "/" + shortUrl;
         // 解析短链接
         String originUrl = resolve(fullShortUrl, request);
-        // 统计访问数据
+        // 统计数据
         recordStats(fullShortUrl, request, response);
         return originUrl;
     }
@@ -208,6 +213,20 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .gid(gid)
                 .build();
         linkAccessStatsMapper.recordStatus(statsDO);
+        // 统计地区数据
+        IpSearcher.IpInfo ipInfo = ipSearcher.searchInfo(ip);
+        LinkLocaleStatsDO stats = LinkLocaleStatsDO.builder()
+                .fullShortUrl(fullShortUrl)
+                .province(ipInfo.getProvince())
+                .gid(gid)
+                .date(now.toLocalDate())
+                .cnt(1)
+                .province(ipInfo.getProvince())
+                .city(ipInfo.getCity())
+                .adcode(ipInfo.getAdcode()) // 用城市名称作为临时的 adcode 占位
+                .country(ipInfo.getCountry())
+                .build();
+        linkLocaleStatsMapper.recordStatus(stats);
     }
 
     /**
