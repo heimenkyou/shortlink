@@ -70,15 +70,6 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
 
     private final IpSearcher ipSearcher;
 
-    /**
-     * 查询访问次数最高的 IP
-     *
-     * @return 高频访问 IP 列表
-     */
-    @Override
-    public List<HighFrequencyIpRespDTO> listHighFrequencyIp() {
-        return linkAccessLogsMapper.listHighFrequencyIp();
-    }
 
     /**
      * 解析短链接并统计访问数据

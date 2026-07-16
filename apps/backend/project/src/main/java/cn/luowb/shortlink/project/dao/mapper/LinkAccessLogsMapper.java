@@ -5,7 +5,6 @@ import cn.luowb.shortlink.project.dao.entity.LinkAccessStatsDO;
 import cn.luowb.shortlink.project.dto.req.ShortLinkGroupStatsAccessRecordReqDTO;
 import cn.luowb.shortlink.project.dto.req.ShortLinkGroupStatsReqDTO;
 import cn.luowb.shortlink.project.dto.req.ShortLinkStatsReqDTO;
-import cn.luowb.shortlink.project.dto.resp.HighFrequencyIpRespDTO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,24 +20,6 @@ import java.util.Map;
  */
 @Mapper
 public interface LinkAccessLogsMapper extends BaseMapper<LinkAccessLogsDO> {
-
-    /**
-     * 查询访问次数最高的 IP
-     *
-     * @return 高频访问 IP 列表
-     */
-    @Select("""
-            SELECT ip, COUNT(*) AS access_count
-            FROM t_link_access_logs
-            WHERE ip IS NOT NULL
-              AND ip <> ''
-              AND del_flag = 0
-            GROUP BY ip
-            ORDER BY access_count DESC, ip ASC
-            LIMIT 10
-            """)
-    List<HighFrequencyIpRespDTO> listHighFrequencyIp();
-
 
     /**
      * 根据短链接获取指定日期内高频访问IP数据

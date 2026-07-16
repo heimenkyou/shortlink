@@ -8,7 +8,6 @@ import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
-import cn.luowb.shortlink.project.dto.resp.HighFrequencyIpRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import cn.luowb.shortlink.project.service.LinkService;
@@ -90,14 +89,5 @@ public class LinkController {
     @GetMapping("/api/short-link/admin/v1/group/count")
     public Result<List<GroupCountQueryRespDTO>> groupShortLinkCount(@RequestParam("gidList") List<String> gidList) {
         return Results.success(linkService.groupShortLinkCount(gidList));
-    }
-
-    /**
-     * 查询高频访问 IP
-     */
-    @Operation(summary = "查询高频访问 IP")
-    @GetMapping("/api/short-link/v1/high-frequency-ip")
-    public Result<List<HighFrequencyIpRespDTO>> listHighFrequencyIp() {
-        return Results.success(linkService.listHighFrequencyIp());
     }
 }

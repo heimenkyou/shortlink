@@ -6,7 +6,6 @@ import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
-import cn.luowb.shortlink.project.dto.resp.HighFrequencyIpRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -43,13 +42,6 @@ public interface LinkService extends IService<LinkDO> {
      * @return 分组ID列表对应的 分组数量列表
      */
     List<GroupCountQueryRespDTO> groupShortLinkCount(List<String> gidList);
-
-    /**
-     * 查询访问次数最高的 IP
-     *
-     * @return 高频访问 IP 列表
-     */
-    List<HighFrequencyIpRespDTO> listHighFrequencyIp();
 
     /**
      * 修改短链接
