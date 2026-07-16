@@ -6,6 +6,8 @@ import cn.luowb.shortlink.admin.remote.dto.resp.GroupCountQueryRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.HighFrequencyIpRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkCreateRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
+import cn.luowb.shortlink.admin.remote.dto.resp.ShortLinkStatsAccessRecordRespDTO;
+import cn.luowb.shortlink.admin.remote.dto.resp.ShortLinkStatsRespDTO;
 import cn.luowb.shortlink.admin.remote.dto.resp.WebsiteMetadataRespDTO;
 import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.convention.result.Results;
@@ -77,6 +79,66 @@ public interface LinkRemoteService {
     default Result<WebsiteMetadataRespDTO> fetchMetadata(String url) {
         String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/metadata", Map.of("url", url));
         return JSON.parseObject(resultPageJson, new TypeReference<>() {
+        });
+    }
+
+    /**
+     * 查询单个短链接监控数据
+     */
+    default Result<ShortLinkStatsRespDTO> shortLinkStats(ShortLinkStatsReqDTO requestParam) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("fullShortUrl", requestParam.getFullShortUrl());
+        requestMap.put("gid", requestParam.getGid());
+        requestMap.put("startDate", requestParam.getStartDate());
+        requestMap.put("endDate", requestParam.getEndDate());
+        requestMap.put("enableStatus", requestParam.getEnableStatus());
+        String resultJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/stats", requestMap);
+        return JSON.parseObject(resultJson, new TypeReference<>() {
+        });
+    }
+
+    /**
+     * 查询分组短链接监控数据
+     */
+    default Result<ShortLinkStatsRespDTO> groupShortLinkStats(ShortLinkGroupStatsReqDTO requestParam) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("gid", requestParam.getGid());
+        requestMap.put("startDate", requestParam.getStartDate());
+        requestMap.put("endDate", requestParam.getEndDate());
+        String resultJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/stats/group", requestMap);
+        return JSON.parseObject(resultJson, new TypeReference<>() {
+        });
+    }
+
+    /**
+     * 查询单个短链接访问记录监控数据
+     */
+    default Result<PageResult<ShortLinkStatsAccessRecordRespDTO>> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("fullShortUrl", requestParam.getFullShortUrl());
+        requestMap.put("gid", requestParam.getGid());
+        requestMap.put("startDate", requestParam.getStartDate());
+        requestMap.put("endDate", requestParam.getEndDate());
+        requestMap.put("enableStatus", requestParam.getEnableStatus());
+        requestMap.put("current", requestParam.getCurrent());
+        requestMap.put("size", requestParam.getSize());
+        String resultJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/stats/access-record", requestMap);
+        return JSON.parseObject(resultJson, new TypeReference<>() {
+        });
+    }
+
+    /**
+     * 查询分组短链接访问记录监控数据
+     */
+    default Result<PageResult<ShortLinkStatsAccessRecordRespDTO>> groupShortLinkStatsAccessRecord(ShortLinkGroupStatsAccessRecordReqDTO requestParam) {
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("gid", requestParam.getGid());
+        requestMap.put("startDate", requestParam.getStartDate());
+        requestMap.put("endDate", requestParam.getEndDate());
+        requestMap.put("current", requestParam.getCurrent());
+        requestMap.put("size", requestParam.getSize());
+        String resultJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/stats/access-record/group", requestMap);
+        return JSON.parseObject(resultJson, new TypeReference<>() {
         });
     }
 
