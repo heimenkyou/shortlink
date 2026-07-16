@@ -53,6 +53,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -259,14 +260,28 @@ class ShortLinkStatsServiceIntegrationTest {
         assertEquals(2, shortLinkRecords.getRecords().size());
         assertTrue(shortLinkRecords.getRecords().get(0).getCreateTime().compareTo(shortLinkRecords.getRecords().get(1).getCreateTime()) >= 0);
         assertTrue(shortLinkRecords.getRecords().stream().anyMatch(each -> "老访客".equals(each.getUvType()) && oldVisitorCookie.getValue().equals(each.getUser())));
-        assertTrue(shortLinkRecords.getRecords().stream().anyMatch(each -> "新访客".equals(each.getUvType()) && "Safari".equals(each.getBrowser()) && "iOS".equals(each.getOs()) && "125.71.229.12".equals(each.getIp())));
-        assertTrue(shortLinkRecords.getRecords().stream().allMatch(each -> each.getNetwork() == null && each.getDevice() == null && each.getLocale() == null));
+        assertTrue(shortLinkRecords.getRecords().stream().anyMatch(each -> "新访客".equals(each.getUvType())
+                && "Safari".equals(each.getBrowser())
+                && "iOS".equals(each.getOs())
+                && "125.71.229.12".equals(each.getIp())
+                && "Mobile".equals(each.getDevice())
+                && "中国-四川省-成都市".equals(each.getLocale())));
+        assertTrue(shortLinkRecords.getRecords().stream().anyMatch(each -> "老访客".equals(each.getUvType())
+                && oldVisitorCookie.getValue().equals(each.getUser())
+                && "PC".equals(each.getDevice())
+                && "中国-广东省-深圳市".equals(each.getLocale())));
+        assertTrue(shortLinkRecords.getRecords().stream().allMatch(each -> each.getNetwork() != null && !each.getNetwork().isBlank()));
 
         PageResult<ShortLinkStatsAccessRecordRespDTO> groupRecords = shortLinkStatsService.groupShortLinkStatsAccessRecord(buildGroupAccessRecordReq());
         assertEquals(3, groupRecords.getRecords().size());
         assertTrue(groupRecords.getRecords().get(0).getCreateTime().compareTo(groupRecords.getRecords().get(1).getCreateTime()) >= 0);
         assertTrue(groupRecords.getRecords().stream().anyMatch(each -> "老访客".equals(each.getUvType()) && oldVisitorCookie.getValue().equals(each.getUser())));
-        assertTrue(groupRecords.getRecords().stream().anyMatch(each -> "Safari".equals(each.getBrowser()) && "Mac OS".equals(each.getOs()) && "220.181.38.148".equals(each.getIp())));
+        assertTrue(groupRecords.getRecords().stream().anyMatch(each -> "Safari".equals(each.getBrowser())
+                && "Mac OS".equals(each.getOs())
+                && "220.181.38.148".equals(each.getIp())
+                && "PC".equals(each.getDevice())
+                && "中国-北京-北京市".equals(each.getLocale())));
+        assertTrue(groupRecords.getRecords().stream().allMatch(each -> each.getNetwork() != null && !each.getNetwork().isBlank()));
         assertFalse(groupRecords.getRecords().isEmpty());
     }
 
