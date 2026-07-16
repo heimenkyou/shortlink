@@ -2,6 +2,7 @@ package cn.luowb.shortlink.project.controller;
 
 import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.convention.result.Results;
+import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dto.req.ShortLinkGroupStatsAccessRecordReqDTO;
 import cn.luowb.shortlink.project.dto.req.ShortLinkGroupStatsReqDTO;
 import cn.luowb.shortlink.project.dto.req.ShortLinkStatsAccessRecordReqDTO;
@@ -9,7 +10,6 @@ import cn.luowb.shortlink.project.dto.req.ShortLinkStatsReqDTO;
 import cn.luowb.shortlink.project.dto.resp.ShortLinkStatsAccessRecordRespDTO;
 import cn.luowb.shortlink.project.dto.resp.ShortLinkStatsRespDTO;
 import cn.luowb.shortlink.project.service.ShortLinkStatsService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ public class ShortLinkStatsController {
      */
     @Operation(summary = "访问单个短链接指定时间内访问记录监控数据")
     @GetMapping("/api/short-link/v1/stats/access-record")
-    public Result<IPage<ShortLinkStatsAccessRecordRespDTO>> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam) {
+    public Result<PageResult<ShortLinkStatsAccessRecordRespDTO>> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam) {
         return Results.success(shortLinkStatsService.shortLinkStatsAccessRecord(requestParam));
     }
 
@@ -58,7 +58,7 @@ public class ShortLinkStatsController {
      */
     @Operation(summary = "访问分组短链接指定时间内访问记录监控数据")
     @GetMapping("/api/short-link/v1/stats/access-record/group")
-    public Result<IPage<ShortLinkStatsAccessRecordRespDTO>> groupShortLinkStatsAccessRecord(ShortLinkGroupStatsAccessRecordReqDTO requestParam) {
+    public Result<PageResult<ShortLinkStatsAccessRecordRespDTO>> groupShortLinkStatsAccessRecord(ShortLinkGroupStatsAccessRecordReqDTO requestParam) {
         return Results.success(shortLinkStatsService.groupShortLinkStatsAccessRecord(requestParam));
     }
 }

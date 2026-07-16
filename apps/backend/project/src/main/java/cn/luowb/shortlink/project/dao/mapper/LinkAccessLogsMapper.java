@@ -222,5 +222,5 @@ public interface LinkAccessLogsMapper extends BaseMapper<LinkAccessLogsDO> {
             "    AND tlal.create_time BETWEEN #{param.startDate} and #{param.endDate} " +
             "ORDER BY " +
             "    tlal.create_time DESC")
-    IPage<LinkAccessLogsDO> selectGroupPage(@Param("param") ShortLinkGroupStatsAccessRecordReqDTO requestParam);
+    IPage<LinkAccessLogsDO> selectGroupPage(IPage<LinkAccessLogsDO> page, @Param("param") ShortLinkGroupStatsAccessRecordReqDTO requestParam);
 }

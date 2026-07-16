@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.luowb.shortlink.common.convention.ServiceException;
+import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.common.biz.user.UserContext;
 import cn.luowb.shortlink.project.dao.entity.*;
 import cn.luowb.shortlink.project.dao.mapper.*;
@@ -402,16 +403,17 @@ public class ShortLinkStatsServiceImpl implements ShortLinkStatsService {
     }
 
     @Override
-    public IPage<ShortLinkStatsAccessRecordRespDTO> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam) {
+    public PageResult<ShortLinkStatsAccessRecordRespDTO> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam) {
         checkGroupBelongToUser(requestParam.getGid());
         LambdaQueryWrapper<LinkAccessLogsDO> queryWrapper = Wrappers.lambdaQuery(LinkAccessLogsDO.class)
                 .eq(LinkAccessLogsDO::getFullShortUrl, requestParam.getFullShortUrl())
                 .between(LinkAccessLogsDO::getCreateTime, requestParam.getStartDate(), requestParam.getEndDate())
                 .eq(LinkAccessLogsDO::getDelFlag, 0)
                 .orderByDesc(LinkAccessLogsDO::getCreateTime);
-        IPage<LinkAccessLogsDO> linkAccessLogsDOIPage = linkAccessLogsMapper.selectPage(requestParam, queryWrapper);
+        IPage<LinkAccessLogsDO> page = new Page<>(requestParam.getCurrent(), requestParam.getSize());
+        IPage<LinkAccessLogsDO> linkAccessLogsDOIPage = linkAccessLogsMapper.selectPage(page, queryWrapper);
         if (CollUtil.isEmpty(linkAccessLogsDOIPage.getRecords())) {
-            return new Page<>();
+            return PageResult.of(new Page<>(requestParam.getCurrent(), requestParam.getSize()));
         }
         IPage<ShortLinkStatsAccessRecordRespDTO> actualResult = linkAccessLogsDOIPage.convert(each -> BeanUtil.toBean(each, ShortLinkStatsAccessRecordRespDTO.class));
         List<String> userAccessLogsList = actualResult.getRecords().stream()
@@ -434,15 +436,16 @@ public class ShortLinkStatsServiceImpl implements ShortLinkStatsService {
                     .orElse("旧访客");
             each.setUvType(uvType);
         });
-        return actualResult;
+        return PageResult.of(actualResult);
     }
 
     @Override
-    public IPage<ShortLinkStatsAccessRecordRespDTO> groupShortLinkStatsAccessRecord(ShortLinkGroupStatsAccessRecordReqDTO requestParam) {
+    public PageResult<ShortLinkStatsAccessRecordRespDTO> groupShortLinkStatsAccessRecord(ShortLinkGroupStatsAccessRecordReqDTO requestParam) {
         checkGroupBelongToUser(requestParam.getGid());
-        IPage<LinkAccessLogsDO> linkAccessLogsDOIPage = linkAccessLogsMapper.selectGroupPage(requestParam);
+        IPage<LinkAccessLogsDO> page = new Page<>(requestParam.getCurrent(), requestParam.getSize());
+        IPage<LinkAccessLogsDO> linkAccessLogsDOIPage = linkAccessLogsMapper.selectGroupPage(page, requestParam);
         if (CollUtil.isEmpty(linkAccessLogsDOIPage.getRecords())) {
-            return new Page<>();
+            return PageResult.of(new Page<>(requestParam.getCurrent(), requestParam.getSize()));
         }
         IPage<ShortLinkStatsAccessRecordRespDTO> actualResult = linkAccessLogsDOIPage
                 .convert(each -> BeanUtil.toBean(each, ShortLinkStatsAccessRecordRespDTO.class));
@@ -464,7 +467,7 @@ public class ShortLinkStatsServiceImpl implements ShortLinkStatsService {
                     .orElse("旧访客");
             each.setUvType(uvType);
         });
-        return actualResult;
+        return PageResult.of(actualResult);
     }
 
     public void checkGroupBelongToUser(String gid) throws ServiceException {

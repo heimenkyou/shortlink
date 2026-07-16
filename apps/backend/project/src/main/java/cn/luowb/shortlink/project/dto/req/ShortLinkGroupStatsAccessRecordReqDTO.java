@@ -1,8 +1,8 @@
 
 package cn.luowb.shortlink.project.dto.req;
 
+import cn.luowb.shortlink.common.dto.BasePageQuery;
 import cn.luowb.shortlink.project.dao.entity.LinkAccessLogsDO;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @Schema(description = "分组短链接监控访问记录请求参数")
-public class ShortLinkGroupStatsAccessRecordReqDTO extends Page<LinkAccessLogsDO> {
+public class ShortLinkGroupStatsAccessRecordReqDTO extends BasePageQuery {
 
     /**
      * 分组标识

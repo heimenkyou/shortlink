@@ -1,12 +1,12 @@
 package cn.luowb.shortlink.project.service;
 
+import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.dto.req.ShortLinkGroupStatsAccessRecordReqDTO;
 import cn.luowb.shortlink.project.dto.req.ShortLinkGroupStatsReqDTO;
 import cn.luowb.shortlink.project.dto.req.ShortLinkStatsAccessRecordReqDTO;
 import cn.luowb.shortlink.project.dto.req.ShortLinkStatsReqDTO;
 import cn.luowb.shortlink.project.dto.resp.ShortLinkStatsAccessRecordRespDTO;
 import cn.luowb.shortlink.project.dto.resp.ShortLinkStatsRespDTO;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * 短链接监控接口层
@@ -35,7 +35,7 @@ public interface ShortLinkStatsService {
      * @param requestParam 获取短链接监控访问记录数据入参
      * @return 访问记录监控数据
      */
-    IPage<ShortLinkStatsAccessRecordRespDTO> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam);
+    PageResult<ShortLinkStatsAccessRecordRespDTO> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam);
 
     /**
      * 访问分组短链接指定时间内访问记录监控数据
@@ -43,5 +43,5 @@ public interface ShortLinkStatsService {
      * @param requestParam 获取分组短链接监控访问记录数据入参
      * @return 分组访问记录监控数据
      */
-    IPage<ShortLinkStatsAccessRecordRespDTO> groupShortLinkStatsAccessRecord(ShortLinkGroupStatsAccessRecordReqDTO requestParam);
+    PageResult<ShortLinkStatsAccessRecordRespDTO> groupShortLinkStatsAccessRecord(ShortLinkGroupStatsAccessRecordReqDTO requestParam);
 }

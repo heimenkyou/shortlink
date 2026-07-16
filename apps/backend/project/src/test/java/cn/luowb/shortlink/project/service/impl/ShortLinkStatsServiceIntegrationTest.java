@@ -1,6 +1,7 @@
 package cn.luowb.shortlink.project.service.impl;
 
 import cn.luowb.shortlink.common.constant.RedisCacheKeyEnum;
+import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.common.biz.user.UserContext;
 import cn.luowb.shortlink.project.common.biz.user.UserInfoDTO;
 import cn.luowb.shortlink.project.dao.entity.LinkAccessLogsDO;
@@ -17,7 +18,6 @@ import cn.luowb.shortlink.project.dto.resp.ShortLinkStatsAccessDailyRespDTO;
 import cn.luowb.shortlink.project.dto.resp.ShortLinkStatsAccessRecordRespDTO;
 import cn.luowb.shortlink.project.dto.resp.ShortLinkStatsRespDTO;
 import cn.luowb.shortlink.project.service.ShortLinkStatsService;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -255,14 +255,14 @@ class ShortLinkStatsServiceIntegrationTest {
 
         loginAsGroupOwner();
 
-        IPage<ShortLinkStatsAccessRecordRespDTO> shortLinkRecords = shortLinkStatsService.shortLinkStatsAccessRecord(buildShortLinkAccessRecordReq(first));
+        PageResult<ShortLinkStatsAccessRecordRespDTO> shortLinkRecords = shortLinkStatsService.shortLinkStatsAccessRecord(buildShortLinkAccessRecordReq(first));
         assertEquals(2, shortLinkRecords.getRecords().size());
         assertTrue(shortLinkRecords.getRecords().get(0).getCreateTime().compareTo(shortLinkRecords.getRecords().get(1).getCreateTime()) >= 0);
         assertTrue(shortLinkRecords.getRecords().stream().anyMatch(each -> "老访客".equals(each.getUvType()) && oldVisitorCookie.getValue().equals(each.getUser())));
         assertTrue(shortLinkRecords.getRecords().stream().anyMatch(each -> "新访客".equals(each.getUvType()) && "Safari".equals(each.getBrowser()) && "iOS".equals(each.getOs()) && "125.71.229.12".equals(each.getIp())));
         assertTrue(shortLinkRecords.getRecords().stream().allMatch(each -> each.getNetwork() == null && each.getDevice() == null && each.getLocale() == null));
 
-        IPage<ShortLinkStatsAccessRecordRespDTO> groupRecords = shortLinkStatsService.groupShortLinkStatsAccessRecord(buildGroupAccessRecordReq());
+        PageResult<ShortLinkStatsAccessRecordRespDTO> groupRecords = shortLinkStatsService.groupShortLinkStatsAccessRecord(buildGroupAccessRecordReq());
         assertEquals(3, groupRecords.getRecords().size());
         assertTrue(groupRecords.getRecords().get(0).getCreateTime().compareTo(groupRecords.getRecords().get(1).getCreateTime()) >= 0);
         assertTrue(groupRecords.getRecords().stream().anyMatch(each -> "老访客".equals(each.getUvType()) && oldVisitorCookie.getValue().equals(each.getUser())));
