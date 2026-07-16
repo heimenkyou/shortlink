@@ -84,16 +84,19 @@ CREATE TABLE `t_link_access_logs`
     `full_short_url` varchar(128) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '完整短链接',
     `gid`            varchar(32) COLLATE utf8mb4_general_ci  DEFAULT NULL COMMENT '分组标识',
     `user`           varchar(64) COLLATE utf8mb4_general_ci  DEFAULT NULL COMMENT '用户信息',
+    `ip`             varchar(64) COLLATE utf8mb4_general_ci  DEFAULT NULL COMMENT 'IP',
     `browser`        varchar(64) COLLATE utf8mb4_general_ci  DEFAULT NULL COMMENT '浏览器',
     `os`             varchar(64) COLLATE utf8mb4_general_ci  DEFAULT NULL COMMENT '操作系统',
-    `ip`             varchar(64) COLLATE utf8mb4_general_ci  DEFAULT NULL COMMENT 'IP',
+    `network`        varchar(64) COLLATE utf8mb4_general_ci  DEFAULT NULL COMMENT '访问网络',
+    `device`         varchar(64) COLLATE utf8mb4_general_ci  DEFAULT NULL COMMENT '访问设备',
+    `locale`         varchar(256) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '访问地区',
     `create_time`    datetime                                DEFAULT NULL COMMENT '创建时间',
     `update_time`    datetime                                DEFAULT NULL COMMENT '修改时间',
     `del_flag`       tinyint(1)                              DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_general_ci COMMENT '短链接访问日志表'
+  COLLATE = utf8mb4_general_ci COMMENT = '短链接访问日志表';
 
 -- 短链接访问设备统计表
 CREATE TABLE `t_link_device_stats`
@@ -111,7 +114,7 @@ CREATE TABLE `t_link_device_stats`
     UNIQUE KEY `idx_unique_browser_stats` (`full_short_url`, `gid`, `date`, `device`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8mb4 COMMENT '短链接访问设备统计表';
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接访问设备统计表';
 
 -- 短链接访问网络统计表
 CREATE TABLE `t_link_network_stats`
@@ -129,7 +132,7 @@ CREATE TABLE `t_link_network_stats`
     UNIQUE KEY `idx_unique_browser_stats` (`full_short_url`, `gid`, `date`, `network`) USING BTREE
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
-  DEFAULT CHARSET = utf8mb4 COMMENT '短链接访问网络统计表';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='短链接访问网络统计表';
 
 -- 短链接分组表
 CREATE TABLE `t_group_0`

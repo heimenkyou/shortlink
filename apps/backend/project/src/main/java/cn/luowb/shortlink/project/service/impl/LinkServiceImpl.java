@@ -257,16 +257,6 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .browser(browser)
                 .build();
         linkBrowserStatsMapper.recordStatus(browserStats);
-        // 记录访问日志
-        LinkAccessLogsDO accessLog = LinkAccessLogsDO.builder()
-                .fullShortUrl(fullShortUrl)
-                .gid(gid)
-                .user(uvFlag)
-                .browser(browser)
-                .os(os)
-                .ip(ip)
-                .build();
-        linkAccessLogsMapper.insert(accessLog);
         // 统计设备数据
         String device = UserAgentExtractor.extractDevice(request);
         LinkDeviceStatsDO deviceStats = LinkDeviceStatsDO.builder()
@@ -287,6 +277,20 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .network(network)
                 .build();
         linkNetworkStatsMapper.recordStatus(networkStats);
+        // 记录访问日志
+        String locale = StrUtil.join("-", ipInfo.getCountry(), ipInfo.getProvince(), ipInfo.getCity());
+        LinkAccessLogsDO accessLog = LinkAccessLogsDO.builder()
+                .fullShortUrl(fullShortUrl)
+                .gid(gid)
+                .user(uvFlag)
+                .browser(browser)
+                .os(os)
+                .ip(ip)
+                .network(network)
+                .device(device)
+                .locale(locale)
+                .build();
+        linkAccessLogsMapper.insert(accessLog);
     }
 
     /**
