@@ -1,8 +1,11 @@
 package cn.luowb.shortlink.project.dao.mapper;
 
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
+import cn.luowb.shortlink.project.dto.req.ShortLinkPageReqDTO;
+import cn.luowb.shortlink.project.dto.req.ShortLinkRecycleBinPageReqDTO;
 import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -29,4 +32,15 @@ public interface LinkMapper extends BaseMapper<LinkDO> {
                         @Param("totalPv") Integer totalPv,
                         @Param("totalUv") Integer totalUv,
                         @Param("totalUip") Integer totalUip);
+
+
+    /**
+     * 分页统计短链接
+     */
+    IPage<LinkDO> pageLink(ShortLinkPageReqDTO requestParam);
+
+    /**
+     * 分页统计回收站短链接
+     */
+    IPage<LinkDO> pageRecycleBinLink(ShortLinkRecycleBinPageReqDTO requestParam);
 }
