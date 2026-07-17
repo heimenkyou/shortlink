@@ -78,4 +78,40 @@ public class LinkPageRespDTO {
      */
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
+
+    /**
+     * 历史PV
+     */
+    @Schema(description = "历史PV")
+    private Integer totalPv;
+
+    /**
+     * 今日PV
+     */
+    @Schema(description = "今日PV")
+    private Integer todayPv;
+
+    /**
+     * 历史UV
+     */
+    @Schema(description = "历史UV")
+    private Integer totalUv;
+
+    /**
+     * 今日UV
+     */
+    @Schema(description = "今日UV")
+    private Integer todayUv;
+
+    /**
+     * 历史UIP
+     */
+    @Schema(description = "历史UIP")
+    private Integer totalUip;
+
+    /**
+     * 今日UIP
+     */
+    @Schema(description = "今日UIP")
+    private Integer todayUip;
 }

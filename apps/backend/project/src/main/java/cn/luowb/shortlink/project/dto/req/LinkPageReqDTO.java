@@ -15,4 +15,10 @@ public class LinkPageReqDTO extends BasePageQuery {
     @Schema(description = "分组标识")
     @NotBlank(message = "分组标识不能为空")
     private String gid;
+
+    /**
+     * 排序标识
+     */
+    @Schema(description = "排序标识")
+    private String orderTag;
 }

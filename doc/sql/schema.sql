@@ -134,6 +134,296 @@ CREATE TABLE `t_link_network_stats`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接访问网络统计表';
 
+-- 短链接今日统计表
+CREATE TABLE `t_link_stats_today_0`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_0';
+
+CREATE TABLE `t_link_stats_today_1`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_1';
+
+CREATE TABLE `t_link_stats_today_2`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_2';
+
+CREATE TABLE `t_link_stats_today_3`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_3';
+
+CREATE TABLE `t_link_stats_today_4`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_4';
+
+CREATE TABLE `t_link_stats_today_5`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_5';
+
+CREATE TABLE `t_link_stats_today_6`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_6';
+
+CREATE TABLE `t_link_stats_today_7`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_7';
+
+CREATE TABLE `t_link_stats_today_8`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_8';
+
+CREATE TABLE `t_link_stats_today_9`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_9';
+
+CREATE TABLE `t_link_stats_today_10`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_10';
+
+CREATE TABLE `t_link_stats_today_11`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_11';
+
+CREATE TABLE `t_link_stats_today_12`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_12';
+
+CREATE TABLE `t_link_stats_today_13`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_13';
+
+CREATE TABLE `t_link_stats_today_14`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_14';
+
+CREATE TABLE `t_link_stats_today_15`
+(
+    `id`             bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `gid`            varchar(32)  DEFAULT 'default' COMMENT '分组标识',
+    `full_short_url` varchar(128) DEFAULT NULL COMMENT '短链接',
+    `date`           date         DEFAULT NULL COMMENT '日期',
+    `today_pv`       int(11)      DEFAULT '0' COMMENT '今日PV',
+    `today_uv`       int(11)      DEFAULT '0' COMMENT '今日UV',
+    `today_uip`      int(11)      DEFAULT '0' COMMENT '今日IP数',
+    `create_time`    datetime     DEFAULT NULL COMMENT '创建时间',
+    `update_time`    datetime     DEFAULT NULL COMMENT '修改时间',
+    `del_flag`       tinyint(1)   DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `idx_unique_today_stats` (`full_short_url`,`gid`,`date`) USING BTREE
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 2
+  DEFAULT CHARSET = utf8mb4 COMMENT = '短链接今日统计表_15';
+
+
 -- 短链接分组表
 CREATE TABLE `t_group_0`
 (
@@ -393,11 +683,14 @@ CREATE TABLE `t_link_0`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -417,11 +710,14 @@ CREATE TABLE `t_link_1`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -441,11 +737,14 @@ CREATE TABLE `t_link_2`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -465,11 +764,14 @@ CREATE TABLE `t_link_3`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -489,11 +791,14 @@ CREATE TABLE `t_link_4`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -513,11 +818,14 @@ CREATE TABLE `t_link_5`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -537,11 +845,14 @@ CREATE TABLE `t_link_6`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -561,11 +872,14 @@ CREATE TABLE `t_link_7`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -585,11 +899,14 @@ CREATE TABLE `t_link_8`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -609,11 +926,14 @@ CREATE TABLE `t_link_9`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -633,11 +953,14 @@ CREATE TABLE `t_link_10`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -657,11 +980,14 @@ CREATE TABLE `t_link_11`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -681,11 +1007,14 @@ CREATE TABLE `t_link_12`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -705,11 +1034,14 @@ CREATE TABLE `t_link_13`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -729,11 +1061,14 @@ CREATE TABLE `t_link_14`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
@@ -753,11 +1088,14 @@ CREATE TABLE `t_link_15`
     `valid_date_type` tinyint(1)                                             DEFAULT NULL COMMENT '有效期类型 0：永久有效 1：用户自定义',
     `valid_date`      datetime                                               DEFAULT NULL COMMENT '有效期',
     `describe`        varchar(1024)                                          DEFAULT NULL COMMENT '描述',
+    `total_pv`        int(11)                                                DEFAULT '0' COMMENT '历史PV',
+    `total_uv`        int(11)                                                DEFAULT '0' COMMENT '历史UV',
+    `total_uip`       int(11)                                                DEFAULT '0' COMMENT '历史UIP',
     `create_time`     datetime                                               DEFAULT NULL COMMENT '创建时间',
     `update_time`     datetime                                               DEFAULT NULL COMMENT '修改时间',
     `del_flag`        tinyint(1)                                             DEFAULT NULL COMMENT '删除标识 0：未删除 1：已删除',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `idx_unique_full_short_url` (`full_short_url`) USING BTREE
+    UNIQUE KEY `idx_unique_full-short-url` (`full_short_url`) USING BTREE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='短链接表';
 
