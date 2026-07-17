@@ -67,6 +67,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final LinkAccessLogsMapper linkAccessLogsMapper;
     private final LinkDeviceStatsMapper linkDeviceStatsMapper;
     private final LinkNetworkStatsMapper linkNetworkStatsMapper;
+    private final LinkStatsTodayMapper linkStatsTodayMapper;
 
     private final IpSearcher ipSearcher;
 
@@ -282,6 +283,16 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
                 .locale(locale)
                 .build();
         linkAccessLogsMapper.insert(accessLog);
+        linkMapper.incrementStats(gid, fullShortUrl, 1, uvFirst ? 1 : 0, uipFirst ? 1 : 0);
+        LinkStatsTodayDO linkStatsTodayDO = LinkStatsTodayDO.builder()
+                .todayPv(1)
+                .todayUv(uvFirst ? 1 : 0)
+                .todayUip(uipFirst ? 1 : 0)
+                .fullShortUrl(fullShortUrl)
+                .gid(gid)
+                .date(nowDate)
+                .build();
+        linkStatsTodayMapper.recordStatus(linkStatsTodayDO);
     }
 
     /**
@@ -299,6 +310,9 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
         linkDO.setFullShortUrl(fullShortUrl);
         linkDO.setShortUri(suffix);
         linkDO.setEnableStatus(0);
+        linkDO.setTotalPv(0);
+        linkDO.setTotalUv(0);
+        linkDO.setTotalUip(0);
         // 获取网站图标
         WebsiteMetadataRespDTO metadata = urlMetadataService.fetchMetadata(requestParam.getOriginUrl());
         linkDO.setFavicon(metadata.getFavicon());

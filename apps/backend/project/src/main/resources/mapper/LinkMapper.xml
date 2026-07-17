@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.luowb.shortlink.project.dao.mapper.LinkMapper">
+    <!-- 自增短链接访问次数 -->
+    <update id="incrementStats">
+        UPDATE t_link
+        SET total_pv  = total_pv + #{totalPv},
+            total_uv  = total_uv + #{totalUv},
+            total_uip = total_uip + #{totalUip}
+        WHERE gid = #{gid}
+          AND full_short_url = #{fullShortUrl}
+    </update>
 
     <!-- 查询分组下的短链接数量 -->
     <select id="selectCountByGid" resultType="cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO">

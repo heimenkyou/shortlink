@@ -9,5 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface LinkStatsTodayMapper extends BaseMapper<LinkStatsTodayDO> {
-
+    /**
+     * 记录今日统计监控数据
+     */
+    void recordStatus(LinkStatsTodayDO linkStatsTodayDO);
 }

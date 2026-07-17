@@ -20,4 +20,13 @@ public interface LinkMapper extends BaseMapper<LinkDO> {
      * @return 分组ID列表对应的 分组数量列表
      */
     List<GroupCountQueryRespDTO> selectCountByGid(@Param("gidList") List<String> gidList);
+
+    /**
+     * 短链接访问统计自增
+     */
+    void incrementStats(@Param("gid") String gid,
+                        @Param("fullShortUrl") String fullShortUrl,
+                        @Param("totalPv") Integer totalPv,
+                        @Param("totalUv") Integer totalUv,
+                        @Param("totalUip") Integer totalUip);
 }
