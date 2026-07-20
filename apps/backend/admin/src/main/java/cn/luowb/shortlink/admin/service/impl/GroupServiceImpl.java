@@ -17,11 +17,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.GROUP_CREATE_LOCK_KEY;
 
 /**
  * 短链接分组服务实现
@@ -29,9 +34,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
+    private final RedissonClient redissonClient;
     // TODO 以后再改成 feign 调用
     LinkRemoteService linkRemoteService = new LinkRemoteService() {
     };
+
+    @Value("${app.group.max-count:20}")
+    private int maxGroupCount;
 
     /**
      * 新增短链接分组
@@ -45,26 +54,40 @@ public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implemen
 
     @Override
     public void save(String username, String groupName) {
-        // 生成不重复的分组标识
-        String gid;
-        while (true) {
-            gid = RandomUtil.randomNumbers(6);
-            LambdaQueryWrapper<GroupDO> wrapper = Wrappers.lambdaQuery(GroupDO.class)
-                    .eq(GroupDO::getGid, gid)
+        RLock lock = redissonClient.getLock(GROUP_CREATE_LOCK_KEY.getKey(username));
+        lock.lock();
+        try {
+            // 检查分组上限
+            int maxGroupCount = 10;
+            long count = this.count(Wrappers.lambdaQuery(GroupDO.class)
                     .eq(GroupDO::getUsername, username)
-                    .eq(GroupDO::getDelFlag, 0);
-            if (!this.exists(wrapper)) {
-                break;
+                    .eq(GroupDO::getDelFlag, 0));
+            if (count >= maxGroupCount) {
+                throw new ClientException(String.format("分组数量已达上限 %d", maxGroupCount));
             }
-        }
-        GroupDO groupDO = GroupDO.builder()
-                .gid(gid)
-                .name(groupName)
-                .username(username)
-                .sortOrder(0)
-                .build();
-        if (!this.save(groupDO)) {
-            throw new ClientException("分组创建失败");
+            // 生成不重复的分组标识
+            String gid;
+            while (true) {
+                gid = RandomUtil.randomNumbers(6);
+                LambdaQueryWrapper<GroupDO> wrapper = Wrappers.lambdaQuery(GroupDO.class)
+                        .eq(GroupDO::getGid, gid)
+                        .eq(GroupDO::getUsername, username)
+                        .eq(GroupDO::getDelFlag, 0);
+                if (!this.exists(wrapper)) {
+                    break;
+                }
+            }
+            GroupDO groupDO = GroupDO.builder()
+                    .gid(gid)
+                    .name(groupName)
+                    .username(username)
+                    .sortOrder(0)
+                    .build();
+            if (!this.save(groupDO)) {
+                throw new ClientException("分组创建失败");
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

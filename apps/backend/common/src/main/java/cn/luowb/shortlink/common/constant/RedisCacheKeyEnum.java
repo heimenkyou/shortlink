@@ -7,6 +7,10 @@ public enum RedisCacheKeyEnum {
     LOCK_USER_REGISTER_KEY("short-link:lock_user-register:%s"),
     USER_SESSION_KEY("short-link:user:session:%s"),
     SESSION_USER_KEY("short-link:session:%s"),
+    /**
+     * 短链接分组创建锁前缀 Key
+     */
+    GROUP_CREATE_LOCK_KEY("short-link:lock_group:create:%s"),
 
     /**
      * 短链接跳转前缀 Key
