@@ -32,7 +32,11 @@ public enum RedisCacheKeyEnum {
     /**
      * 原始链接白名单启用状态 Key
      */
-    ORIGIN_URL_WHITELIST_ENABLED_KEY("short-link:config:origin-url-whitelist:enabled");
+    ORIGIN_URL_WHITELIST_ENABLED_KEY("short-link:config:origin-url-whitelist:enabled"),
+    /**
+     * 用户请求频控 Key
+     */
+    USER_FLOW_RISK_CONTROL_KEY("short-link:user-flow-risk-control:%s");
 
     private final String template;
 

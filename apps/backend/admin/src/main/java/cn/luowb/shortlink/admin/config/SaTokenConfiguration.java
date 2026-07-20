@@ -3,6 +3,7 @@ package cn.luowb.shortlink.admin.config;
 import cn.dev33.satoken.interceptor.SaInterceptor;
 import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.luowb.shortlink.admin.common.biz.user.UserFlowRiskControlInterceptor;
 import cn.luowb.shortlink.admin.common.biz.user.UserContextInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,7 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class SaTokenConfiguration implements WebMvcConfigurer {
+    private final UserFlowRiskControlInterceptor userFlowRiskControlInterceptor;
     private final UserContextInterceptor userContextInterceptor;
 
     @Override
@@ -34,6 +36,14 @@ public class SaTokenConfiguration implements WebMvcConfigurer {
                 );
         // 用户信息上下文拦截器，装配用户信息
         registry.addInterceptor(userContextInterceptor)
+                .addPathPatterns("/api/**")
+                .excludePathPatterns(
+                        "/api/short-link/admin/v1/user/login",
+                        "/api/short-link/admin/v1/user/has-username",
+                        "/api/short-link/admin/v1/user/check-login",
+                        "/api/short-link/admin/v1/user"
+                );
+        registry.addInterceptor(userFlowRiskControlInterceptor)
                 .addPathPatterns("/api/**")
                 .excludePathPatterns(
                         "/api/short-link/admin/v1/user/login",

@@ -67,6 +67,9 @@ app:
     database: ${REDIS_DATABASE:2}
   group:
     max-count: 20
+  flow-risk-control:
+    window-seconds: 1
+    max-requests: 20
   security:
     whitelist:
       # 部署到公网设为 true，本地调试设为 false
