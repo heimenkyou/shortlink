@@ -28,7 +28,11 @@ public enum RedisCacheKeyEnum {
     /**
      * 短链接访问统计独立IP数 Key
      */
-    LINK_ACCESS_STATS_UIP_KEY("short-link:stats:uip:%s");
+    LINK_ACCESS_STATS_UIP_KEY("short-link:stats:uip:%s"),
+    /**
+     * 原始链接白名单启用状态 Key
+     */
+    ORIGIN_URL_WHITELIST_ENABLED_KEY("short-link:config:origin-url-whitelist:enabled");
 
     private final String template;
 

@@ -67,3 +67,65 @@ app:
     database: ${REDIS_DATABASE:2}
   group:
     max-count: 20
+  security:
+    whitelist:
+      # 部署到公网设为 true，本地调试设为 false
+      enabled: true
+      # key = 域名（支持通配符 *.xxx），value = 展示给用户看的友好名称
+      domain-name-map:
+        # ===== 技术开发 & 社区 =====
+        "[*.luowb.cn]": "罗文彬的个人站"
+        github.com: "全球最大开源社区(GitHub)"
+        gitee.com: "国内代码托管平台(Gitee)"
+        csdn.net: "CSDN 技术博客"
+        blog.csdn.net: "CSDN 博客"
+        juejin.cn: "稀土掘金技术社区"
+        zhihu.com: "知乎专栏"
+        oschina.net: "开源中国社区"
+        segmentfault.com: "思否技术问答"
+        leetcode.cn: "力扣刷题站"
+        spring.io: "Spring 官方文档"
+        docs.oracle.com: "Oracle 官方文档"
+        apache.org: "Apache 开源基金会"
+
+        # ===== 视频 & 弹幕 =====
+        bilibili.com: "B站 哔哩哔哩"
+        "[*.bilibili.com]": "B站子域名"
+        iqiyi.com: "爱奇艺视频"
+        youku.com: "优酷视频"
+        douyin.com: "抖音短视频"
+        kuaishou.com: "快手短视频"
+
+        # ===== 社交 & 即时通讯 =====
+        weibo.com: "新浪微博"
+        "[*.weibo.com]": "微博子域名"
+        qq.com: "腾讯网"
+        "[*.qq.com]": "QQ/腾讯子域"
+        weixin.qq.com: "微信公众平台"
+        t.qq.com: "腾讯微博(备用)"
+
+        # ===== 电商 & 购物 =====
+        taobao.com: "淘宝网"
+        "[*.taobao.com]": "淘宝子域名"
+        tmall.com: "天猫商城"
+        jd.com: "京东商城"
+        "[*.jd.com]": "京东子域名"
+        pinduoduo.com: "拼多多"
+        xiaomi.com: "小米商城"
+        "[*.xiaomi.com]": "小米子域"
+
+        # ===== 门户 & 新闻 & 办公 =====
+        baidu.com: "百度搜索引擎"
+        "[*.baidu.com]": "百度子域名"
+        sina.com.cn: "新浪门户"
+        sohu.com: "搜狐门户"
+        163.com: "网易"
+        people.com.cn: "人民网"
+        xinhuanet.com: "新华网"
+        yuque.com: "语雀文档"
+        docs.qq.com: "腾讯文档"
+        feishu.cn: "飞书办公套件"
+
+        # ===== 公共服务 & 其他 =====
+        "[*.gov.cn]": "中国政府网"
+        "[*.edu.cn]": "中国教育网"

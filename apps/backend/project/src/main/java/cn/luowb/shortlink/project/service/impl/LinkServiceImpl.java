@@ -16,6 +16,7 @@ import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
 import cn.luowb.shortlink.project.dto.resp.*;
 import cn.luowb.shortlink.project.service.LinkService;
+import cn.luowb.shortlink.project.service.OriginUrlWhitelistService;
 import cn.luowb.shortlink.project.service.UrlMetadataService;
 import cn.luowb.shortlink.project.util.HashUtil;
 import cn.luowb.shortlink.project.util.LinkUtil;
@@ -59,6 +60,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final LinkGotoMapper linkGotoMapper;
     private final StringRedisTemplate stringRedisTemplate;
     private final RedissonClient redissonClient;
+    private final OriginUrlWhitelistService originUrlWhitelistService;
     private final UrlMetadataService urlMetadataService;
     private final LinkAccessStatsMapper linkAccessStatsMapper;
     private final LinkLocaleStatsMapper linkLocaleStatsMapper;
@@ -304,6 +306,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public LinkCreateRespDTO createShortLink(LinkCreateReqDTO requestParam) {
+        originUrlWhitelistService.validate(requestParam.getOriginUrl());
         String suffix = generateSuffix(requestParam);
         String fullShortUrl = requestParam.getDomain() + "/" + suffix;
         LinkDO linkDO = BeanUtil.toBean(requestParam, LinkDO.class);
