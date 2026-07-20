@@ -21,6 +21,11 @@ public class OriginUrlWhitelistProperties {
     private boolean enabled;
 
     /**
+     * 开发者修改白名单开关使用的令牌
+     */
+    private String manageToken;
+
+    /**
      * 域名白名单，value 用于给前端展示支持的网站
      */
     private Map<String, String> domainNameMap = new LinkedHashMap<>();

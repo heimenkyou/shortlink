@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -81,7 +82,7 @@ public class OriginUrlWhitelistServiceImpl implements OriginUrlWhitelistService 
      * 通配符只允许匹配子域名，避免根域名误放行
      */
     private boolean matches(String host, String pattern) {
-        String normalizedPattern = pattern.toLowerCase(Locale.ROOT);
+        String normalizedPattern = normalizePattern(pattern);
         if (normalizedPattern.startsWith("*.")) {
             String suffix = normalizedPattern.substring(2);
             return host.endsWith("." + suffix);
@@ -93,10 +94,27 @@ public class OriginUrlWhitelistServiceImpl implements OriginUrlWhitelistService 
      * 去重后保留配置顺序，保证提示内容稳定
      */
     private Set<String> buildSupportedSiteNames(Map<String, String> domainNameMap) {
-        Set<String> supportedSiteNames = new LinkedHashSet<>(domainNameMap.values());
+        Map<String, String> supportedSiteMap = new LinkedHashMap<>();
+        domainNameMap.forEach((pattern, siteName) -> {
+            String normalizedPattern = normalizePattern(pattern);
+            String canonicalDomain = StrUtil.removePrefix(normalizedPattern, "*.");
+            boolean wildcardPattern = normalizedPattern.startsWith("*.");
+            if (!wildcardPattern || !supportedSiteMap.containsKey(canonicalDomain)) {
+                supportedSiteMap.put(canonicalDomain, siteName);
+            }
+        });
+        Set<String> supportedSiteNames = new LinkedHashSet<>(supportedSiteMap.values());
         if (CollUtil.isNotEmpty(supportedSiteNames)) {
             return supportedSiteNames;
         }
         return new LinkedHashSet<>(domainNameMap.keySet());
+    }
+
+    /**
+     * 兼容 yml 中对通配符键的方括号写法
+     */
+    private String normalizePattern(String pattern) {
+        return StrUtil.removeSuffix(StrUtil.removePrefix(pattern, "["), "]")
+                .toLowerCase(Locale.ROOT);
     }
 }
