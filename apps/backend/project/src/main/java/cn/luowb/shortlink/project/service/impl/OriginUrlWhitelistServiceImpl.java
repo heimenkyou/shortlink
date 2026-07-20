@@ -3,7 +3,7 @@ package cn.luowb.shortlink.project.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
-import cn.luowb.shortlink.project.config.OriginUrlWhitelistProperties;
+import cn.luowb.shortlink.project.common.porperties.OriginUrlWhitelistProperties;
 import cn.luowb.shortlink.project.service.OriginUrlWhitelistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;

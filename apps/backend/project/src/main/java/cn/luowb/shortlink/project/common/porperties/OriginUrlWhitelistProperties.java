@@ -1,4 +1,4 @@
-package cn.luowb.shortlink.project.config;
+package cn.luowb.shortlink.project.common.porperties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
