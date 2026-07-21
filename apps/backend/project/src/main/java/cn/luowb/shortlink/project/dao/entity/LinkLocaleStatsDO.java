@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LinkLocaleStatsDO extends BaseDO {
-    
+
     /**
      * 主键 ID
      */

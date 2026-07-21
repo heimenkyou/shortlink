@@ -45,6 +45,7 @@ public interface LinkService extends IService<LinkDO> {
 
     /**
      * 修改短链接
+     *
      * @param requestParam 修改短链接请求参数
      */
     void updateShortLink(LinkUpdateReqDTO requestParam);

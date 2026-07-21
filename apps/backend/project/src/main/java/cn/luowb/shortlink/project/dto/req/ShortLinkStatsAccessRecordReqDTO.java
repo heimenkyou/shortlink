@@ -1,7 +1,6 @@
 package cn.luowb.shortlink.project.dto.req;
 
 import cn.luowb.shortlink.common.dto.BasePageQuery;
-import cn.luowb.shortlink.project.dao.entity.LinkAccessLogsDO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

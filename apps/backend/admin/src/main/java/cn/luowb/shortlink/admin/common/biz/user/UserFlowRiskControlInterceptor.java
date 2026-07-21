@@ -2,6 +2,8 @@ package cn.luowb.shortlink.admin.common.biz.user;
 
 import cn.luowb.shortlink.admin.config.UserFlowRiskControlProperties;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.core.io.ClassPathResource;
@@ -9,9 +11,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Collections;
 

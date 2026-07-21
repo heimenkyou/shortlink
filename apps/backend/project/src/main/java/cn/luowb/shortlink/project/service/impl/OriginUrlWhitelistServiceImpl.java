@@ -10,11 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.ORIGIN_URL_WHITELIST_ENABLED_KEY;
 

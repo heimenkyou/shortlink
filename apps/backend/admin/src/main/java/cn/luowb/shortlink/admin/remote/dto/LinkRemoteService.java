@@ -2,13 +2,7 @@ package cn.luowb.shortlink.admin.remote.dto;
 
 import cn.hutool.http.HttpUtil;
 import cn.luowb.shortlink.admin.remote.dto.req.*;
-import cn.luowb.shortlink.admin.remote.dto.resp.GroupCountQueryRespDTO;
-import cn.luowb.shortlink.admin.remote.dto.resp.HighFrequencyIpRespDTO;
-import cn.luowb.shortlink.admin.remote.dto.resp.LinkCreateRespDTO;
-import cn.luowb.shortlink.admin.remote.dto.resp.LinkPageRespDTO;
-import cn.luowb.shortlink.admin.remote.dto.resp.ShortLinkStatsAccessRecordRespDTO;
-import cn.luowb.shortlink.admin.remote.dto.resp.ShortLinkStatsRespDTO;
-import cn.luowb.shortlink.admin.remote.dto.resp.WebsiteMetadataRespDTO;
+import cn.luowb.shortlink.admin.remote.dto.resp.*;
 import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;

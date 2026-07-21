@@ -12,12 +12,14 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface TrashService extends IService<LinkDO> {
     /**
      * 将链接移动到回收站
+     *
      * @param requestParam 请求参数
      */
     void saveTrash(TrashSaveReqDTO requestParam);
 
     /**
      * 分页查询回收站中的链接
+     *
      * @param requestParam 请求参数
      * @return 分页结果
      */
@@ -25,12 +27,14 @@ public interface TrashService extends IService<LinkDO> {
 
     /**
      * 从回收站中恢复链接
+     *
      * @param requestParam 请求参数
      */
     void recoverTrash(TrashRecoverReqDTO requestParam);
 
     /**
      * 从回收站中删除链接
+     *
      * @param requestParam 请求参数
      */
     void deleteTrash(TrashDeleteReqDTO requestParam);
