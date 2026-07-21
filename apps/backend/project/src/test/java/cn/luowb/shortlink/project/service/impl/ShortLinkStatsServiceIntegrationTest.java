@@ -5,9 +5,11 @@ import cn.luowb.shortlink.common.dto.PageResult;
 import cn.luowb.shortlink.project.common.biz.user.UserContext;
 import cn.luowb.shortlink.project.common.biz.user.UserInfoDTO;
 import cn.luowb.shortlink.project.dao.entity.LinkAccessLogsDO;
+import cn.luowb.shortlink.project.dao.entity.LinkAccessStatsDO;
 import cn.luowb.shortlink.project.dao.entity.LinkDO;
 import cn.luowb.shortlink.project.dao.entity.LinkGotoDO;
 import cn.luowb.shortlink.project.dao.mapper.LinkAccessLogsMapper;
+import cn.luowb.shortlink.project.dao.mapper.LinkAccessStatsMapper;
 import cn.luowb.shortlink.project.dao.mapper.LinkGotoMapper;
 import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
 import cn.luowb.shortlink.project.dto.req.ShortLinkGroupStatsAccessRecordReqDTO;
@@ -17,6 +19,9 @@ import cn.luowb.shortlink.project.dto.req.ShortLinkStatsReqDTO;
 import cn.luowb.shortlink.project.dto.resp.ShortLinkStatsAccessDailyRespDTO;
 import cn.luowb.shortlink.project.dto.resp.ShortLinkStatsAccessRecordRespDTO;
 import cn.luowb.shortlink.project.dto.resp.ShortLinkStatsRespDTO;
+import cn.luowb.shortlink.project.mq.consumer.LinkStatsMessageHandler;
+import cn.luowb.shortlink.project.mq.message.LinkStatsRecordMessage;
+import cn.luowb.shortlink.project.mq.producer.LinkStatsMessageProducer;
 import cn.luowb.shortlink.project.service.ShortLinkStatsService;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.AfterEach;
@@ -34,12 +39,11 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -59,6 +63,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -69,8 +74,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
-@Transactional
-@Rollback
+@Sql(scripts = "/sql/short-link-stats-service-integration-test-cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class ShortLinkStatsServiceIntegrationTest {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -90,8 +94,14 @@ class ShortLinkStatsServiceIntegrationTest {
     private LinkGotoMapper linkGotoMapper;
     @Autowired
     private LinkAccessLogsMapper linkAccessLogsMapper;
+    @Autowired
+    private LinkAccessStatsMapper linkAccessStatsMapper;
+    @Autowired
+    private LinkStatsMessageHandler linkStatsMessageHandler;
     @SpyBean
     private ShortLinkStatsServiceImpl shortLinkStatsServiceImpl;
+    @MockBean
+    private LinkStatsMessageProducer linkStatsMessageProducer;
 
     @MockBean
     private StringRedisTemplate stringRedisTemplate;
@@ -122,6 +132,11 @@ class ShortLinkStatsServiceIntegrationTest {
         doNothing().when(lock).lock();
         doNothing().when(lock).unlock();
         doNothing().when(shortLinkStatsServiceImpl).checkGroupBelongToUser(anyString());
+        doAnswer(invocation -> {
+            LinkStatsRecordMessage message = invocation.getArgument(0);
+            linkStatsMessageHandler.handle(message);
+            return null;
+        }).when(linkStatsMessageProducer).send(any(LinkStatsRecordMessage.class));
 
         // 用内存集合模拟 Redis Set，保证 UV/UIP 行为与真实环境一致。
         when(setOperations.add(anyString(), any(String.class))).thenAnswer(invocation -> {

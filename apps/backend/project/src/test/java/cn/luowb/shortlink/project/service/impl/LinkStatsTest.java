@@ -10,6 +10,9 @@ import cn.luowb.shortlink.project.dao.mapper.LinkAccessStatsMapper;
 import cn.luowb.shortlink.project.dao.mapper.LinkGotoMapper;
 import cn.luowb.shortlink.project.dao.mapper.LinkLocaleStatsMapper;
 import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
+import cn.luowb.shortlink.project.mq.consumer.LinkStatsMessageHandler;
+import cn.luowb.shortlink.project.mq.message.LinkStatsRecordMessage;
+import cn.luowb.shortlink.project.mq.producer.LinkStatsMessageProducer;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,14 +31,17 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -54,9 +60,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
+@Sql(scripts = "/sql/link-stats-test-cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class LinkStatsTest {
 
-    private static final String DOMAIN = "s.sl.cn";
+    private static final String DOMAIN = "link-stats-it.local";
     private static final String ORIGIN_URL = "https://www.example.com";
     private static final String TEST_IP = "113.87.168.12";
 
@@ -72,6 +79,8 @@ class LinkStatsTest {
     private LinkLocaleStatsMapper linkLocaleStatsMapper;
     @Autowired
     private IpSearcher ipSearcher;
+    @Autowired
+    private LinkStatsMessageHandler linkStatsMessageHandler;
 
     @MockBean
     private StringRedisTemplate stringRedisTemplate;
@@ -79,10 +88,13 @@ class LinkStatsTest {
     private RBloomFilter<String> shortUriCreateCachePenetrationBloomFilter;
     @MockBean
     private RedissonClient redissonClient;
+    @MockBean
+    private LinkStatsMessageProducer linkStatsMessageProducer;
 
     private final ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
     private final SetOperations<String, String> setOperations = mock(SetOperations.class);
     private final RLock lock = mock(RLock.class);
+    private final Map<String, Set<String>> redisSetStore = new HashMap<>();
 
     private String gid;
     private String shortUrl;
@@ -94,25 +106,30 @@ class LinkStatsTest {
         gid = "stats-" + uniquePart.substring(0, 12);
         shortUrl = uniquePart.substring(12, 18);
         fullShortUrl = DOMAIN + "/" + shortUrl;
+        redisSetStore.clear();
 
         when(stringRedisTemplate.opsForValue()).thenReturn(valueOperations);
         when(stringRedisTemplate.opsForSet()).thenReturn(setOperations);
         when(valueOperations.get(anyString())).thenReturn(null);
         when(shortUriCreateCachePenetrationBloomFilter.contains(fullShortUrl)).thenReturn(true);
         when(redissonClient.getLock(anyString())).thenReturn(lock);
+        doAnswer(invocation -> {
+            LinkStatsRecordMessage message = invocation.getArgument(0);
+            linkStatsMessageHandler.handle(message);
+            return null;
+        }).when(linkStatsMessageProducer).send(any(LinkStatsRecordMessage.class));
+        when(setOperations.add(anyString(), any(String.class))).thenAnswer(invocation -> {
+            String key = invocation.getArgument(0);
+            String value = invocation.getArgument(1);
+            Set<String> values = redisSetStore.computeIfAbsent(key, each -> new HashSet<>());
+            return values.add(value) ? 1L : 0L;
+        });
     }
 
     @Test
-    @Transactional
-    @Rollback
     @DisplayName("短链接跳转应通过唯一索引聚合访问统计和地区统计")
     void shouldRedirectAndAggregateStatsThroughDatabase() throws Exception {
         insertShortLink();
-
-        String uvKey = RedisCacheKeyEnum.LINK_ACCESS_STATS_UV_KEY.getKey(fullShortUrl);
-        String uipKey = RedisCacheKeyEnum.LINK_ACCESS_STATS_UIP_KEY.getKey(fullShortUrl);
-        when(setOperations.add(eq(uvKey), any(String.class))).thenReturn(1L, 0L);
-        when(setOperations.add(eq(uipKey), eq(TEST_IP))).thenReturn(1L, 0L);
 
         MvcResult firstVisit = performRedirect(null)
                 .andExpect(status().isFound())
@@ -127,6 +144,8 @@ class LinkStatsTest {
                 .andExpect(status().isFound())
                 .andExpect(header().string("Location", ORIGIN_URL))
                 .andExpect(cookie().doesNotExist("uvFlag"));
+
+        awaitStatsPersisted();
 
         List<LinkAccessStatsDO> accessStats = linkAccessStatsMapper.selectList(
                 Wrappers.lambdaQuery(LinkAccessStatsDO.class)
@@ -150,8 +169,6 @@ class LinkStatsTest {
     }
 
     @Test
-    @Transactional
-    @Rollback
     @DisplayName("相同分片内完整短链接重复写入应触发唯一索引")
     void shouldRejectDuplicateFullShortUrl() {
         insertShortLink();
@@ -198,6 +215,35 @@ class LinkStatsTest {
             request.cookie(uvCookie);
         }
         return mockMvc.perform(request);
+    }
+
+    /**
+     * 等待异步统计落库完成。
+     */
+    private void awaitStatsPersisted() throws InterruptedException {
+        long deadline = System.currentTimeMillis() + 5000;
+        while (System.currentTimeMillis() < deadline) {
+            List<LinkAccessStatsDO> accessStats = linkAccessStatsMapper.selectList(
+                    Wrappers.lambdaQuery(LinkAccessStatsDO.class)
+                            .eq(LinkAccessStatsDO::getFullShortUrl, fullShortUrl)
+                            .eq(LinkAccessStatsDO::getGid, gid)
+            );
+            List<LinkLocaleStatsDO> localeStats = linkLocaleStatsMapper.selectList(
+                    Wrappers.lambdaQuery(LinkLocaleStatsDO.class)
+                            .eq(LinkLocaleStatsDO::getFullShortUrl, fullShortUrl)
+                            .eq(LinkLocaleStatsDO::getGid, gid)
+            );
+            boolean accessReady = accessStats.size() == 1
+                    && accessStats.get(0).getPv() == 2
+                    && accessStats.get(0).getUv() == 1
+                    && accessStats.get(0).getUip() == 1;
+            boolean localeReady = localeStats.size() == 1
+                    && localeStats.get(0).getCnt() == 2;
+            if (accessReady && localeReady) {
+                return;
+            }
+            Thread.sleep(100);
+        }
     }
 
     /**

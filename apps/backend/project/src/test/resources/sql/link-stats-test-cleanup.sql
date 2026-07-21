@@ -1,0 +1,10 @@
+DELETE FROM t_link_access_logs WHERE full_short_url LIKE 'link-stats-it.local/%' AND gid LIKE 'stats-%';
+DELETE FROM t_link_browser_stats WHERE full_short_url LIKE 'link-stats-it.local/%' AND gid LIKE 'stats-%';
+DELETE FROM t_link_device_stats WHERE full_short_url LIKE 'link-stats-it.local/%' AND gid LIKE 'stats-%';
+DELETE FROM t_link_network_stats WHERE full_short_url LIKE 'link-stats-it.local/%' AND gid LIKE 'stats-%';
+DELETE FROM t_link_os_stats WHERE full_short_url LIKE 'link-stats-it.local/%' AND gid LIKE 'stats-%';
+DELETE FROM t_link_locale_stats WHERE full_short_url LIKE 'link-stats-it.local/%' AND gid LIKE 'stats-%';
+DELETE FROM t_link_access_stats WHERE full_short_url LIKE 'link-stats-it.local/%' AND gid LIKE 'stats-%';
+DELETE FROM t_link_stats_today WHERE full_short_url LIKE 'link-stats-it.local/%' AND gid LIKE 'stats-%';
+DELETE FROM t_link_goto WHERE full_short_url LIKE 'link-stats-it.local/%' AND gid LIKE 'stats-%';
+DELETE FROM t_link WHERE full_short_url LIKE 'link-stats-it.local/%' AND gid LIKE 'stats-%';

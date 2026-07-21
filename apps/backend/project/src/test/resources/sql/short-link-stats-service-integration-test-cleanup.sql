@@ -1,0 +1,10 @@
+DELETE FROM t_link_access_logs WHERE gid LIKE 'stats_gid_%';
+DELETE FROM t_link_browser_stats WHERE gid LIKE 'stats_gid_%';
+DELETE FROM t_link_device_stats WHERE gid LIKE 'stats_gid_%';
+DELETE FROM t_link_network_stats WHERE gid LIKE 'stats_gid_%';
+DELETE FROM t_link_os_stats WHERE gid LIKE 'stats_gid_%';
+DELETE FROM t_link_locale_stats WHERE gid LIKE 'stats_gid_%';
+DELETE FROM t_link_access_stats WHERE gid LIKE 'stats_gid_%';
+DELETE FROM t_link_stats_today WHERE gid LIKE 'stats_gid_%';
+DELETE FROM t_link_goto WHERE gid LIKE 'stats_gid_%';
+DELETE FROM t_link WHERE gid LIKE 'stats_gid_%';
