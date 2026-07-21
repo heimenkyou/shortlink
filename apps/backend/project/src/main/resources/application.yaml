@@ -31,6 +31,11 @@ spring:
       max-file-size: 200MB
       max-request-size: 500MB
 
+rocketmq:
+  name-server: ${ROCKETMQ_NAME_SERVER:localhost:9876}
+  producer:
+    group: ${ROCKETMQ_PRODUCER_GROUP:shortlink-project-stats-producer}
+
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml  #指定sql映射文件
   configuration:
@@ -72,6 +77,9 @@ app:
     port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD:}
     database: ${REDIS_DATABASE:2}
+  mq:
+    consumer-group: ${ROCKETMQ_CONSUMER_GROUP:shortlink-project-stats-consumer}
+    link-stats-topic: ${ROCKETMQ_LINK_STATS_TOPIC:shortlink-link-stats-topic}
   security:
     whitelist:
       # 部署到公网设为 true，本地调试设为 false

@@ -8,13 +8,19 @@ import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.luowb.shortlink.common.convention.ServiceException;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
 import cn.luowb.shortlink.common.dto.PageResult;
-import cn.luowb.shortlink.project.component.IpSearcher;
-import cn.luowb.shortlink.project.dao.entity.*;
-import cn.luowb.shortlink.project.dao.mapper.*;
+import cn.luowb.shortlink.project.dao.entity.LinkDO;
+import cn.luowb.shortlink.project.dao.entity.LinkGotoDO;
+import cn.luowb.shortlink.project.dao.mapper.LinkGotoMapper;
+import cn.luowb.shortlink.project.dao.mapper.LinkMapper;
 import cn.luowb.shortlink.project.dto.req.LinkCreateReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkPageReqDTO;
 import cn.luowb.shortlink.project.dto.req.LinkUpdateReqDTO;
-import cn.luowb.shortlink.project.dto.resp.*;
+import cn.luowb.shortlink.project.dto.resp.GroupCountQueryRespDTO;
+import cn.luowb.shortlink.project.dto.resp.LinkCreateRespDTO;
+import cn.luowb.shortlink.project.dto.resp.LinkPageRespDTO;
+import cn.luowb.shortlink.project.dto.resp.WebsiteMetadataRespDTO;
+import cn.luowb.shortlink.project.mq.message.LinkStatsRecordMessage;
+import cn.luowb.shortlink.project.mq.producer.LinkStatsMessageProducer;
 import cn.luowb.shortlink.project.service.LinkService;
 import cn.luowb.shortlink.project.service.OriginUrlWhitelistService;
 import cn.luowb.shortlink.project.service.UrlMetadataService;
@@ -40,13 +46,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.*;
+import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.GOTO_SHORT_LINK_KEY;
+import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.LOCK_GOTO_SHORT_LINK_KEY;
 
 /**
  * 短链接服务实现类
@@ -62,16 +67,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private final RedissonClient redissonClient;
     private final OriginUrlWhitelistService originUrlWhitelistService;
     private final UrlMetadataService urlMetadataService;
-    private final LinkAccessStatsMapper linkAccessStatsMapper;
-    private final LinkLocaleStatsMapper linkLocaleStatsMapper;
-    private final LinkOsStatsMapper linkOsStatsMapper;
-    private final LinkBrowserStatsMapper linkBrowserStatsMapper;
-    private final LinkAccessLogsMapper linkAccessLogsMapper;
-    private final LinkDeviceStatsMapper linkDeviceStatsMapper;
-    private final LinkNetworkStatsMapper linkNetworkStatsMapper;
-    private final LinkStatsTodayMapper linkStatsTodayMapper;
-
-    private final IpSearcher ipSearcher;
+    private final LinkStatsMessageProducer linkStatsMessageProducer;
 
 
     /**
@@ -163,8 +159,25 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
      * 统计访问数据
      */
     private void recordStats(String fullShortUrl, HttpServletRequest request, HttpServletResponse response) {
-        // TODO 以后改成异步统计
-        // 获取或生成 UV 标识
+        String uvFlag = getOrCreateUvFlag(request, response);
+        LinkStatsRecordMessage message = LinkStatsRecordMessage.builder()
+                .messageId(IdUtil.fastSimpleUUID())
+                .fullShortUrl(fullShortUrl)
+                .uvFlag(uvFlag)
+                .ip(JakartaServletUtil.getClientIP(request))
+                .os(UserAgentExtractor.extractOs(request))
+                .browser(UserAgentExtractor.extractBrowser(request))
+                .device(UserAgentExtractor.extractDevice(request))
+                .network(UserAgentExtractor.estimateNetwork(request))
+                .occurredAt(LocalDateTime.now())
+                .build();
+        linkStatsMessageProducer.send(message);
+    }
+
+    /**
+     * 获取或生成 UV 标识
+     */
+    private String getOrCreateUvFlag(HttpServletRequest request, HttpServletResponse response) {
         String uvFlag = null;
         Cookie[] cookies = request.getCookies();
         if (ArrayUtil.isNotEmpty(cookies)) {
@@ -183,118 +196,7 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
             uvFlagCookie.setPath("/");
             response.addCookie(uvFlagCookie);
         }
-        // 判断是否是新用户
-        Long uvAdded = stringRedisTemplate.opsForSet().add(LINK_ACCESS_STATS_UV_KEY.getKey(fullShortUrl), uvFlag);
-        boolean uvFirst = Objects.equals(uvAdded, 1L);
-        // 判断是否是新 IP
-        String ip = JakartaServletUtil.getClientIP(request);
-        Long uipAdded = stringRedisTemplate.opsForSet().add(LINK_ACCESS_STATS_UIP_KEY.getKey(fullShortUrl), ip);
-        boolean uipFirst = Objects.equals(uipAdded, 1L);
-
-        // 获取当前时间信息
-        LocalDateTime now = LocalDateTime.now();
-        LocalDate nowDate = now.toLocalDate();
-        int hour = now.getHour();
-        int weekday = now.getDayOfWeek().getValue();
-        // 获取 gid
-        LinkGotoDO gotoDO = linkGotoMapper.selectOne(Wrappers.lambdaQuery(LinkGotoDO.class)
-                .eq(LinkGotoDO::getFullShortUrl, fullShortUrl));
-        if (gotoDO == null) {
-            // 不应当出现这种情况
-            log.error("短链接不存在，无法统计访问数据，{}", fullShortUrl);
-            return;
-        }
-        String gid = gotoDO.getGid();
-        // 统计访问数据
-        LinkAccessStatsDO statsDO = LinkAccessStatsDO.builder()
-                .date(nowDate)
-                .hour(hour)
-                .weekday(weekday)
-                .pv(1)
-                .uv(uvFirst ? 1 : 0)
-                .uip(uipFirst ? 1 : 0)
-                .fullShortUrl(fullShortUrl)
-                .gid(gid)
-                .build();
-        linkAccessStatsMapper.recordStatus(statsDO);
-        // 统计地区数据
-        IpSearcher.IpInfo ipInfo = ipSearcher.searchInfo(ip);
-        LinkLocaleStatsDO stats = LinkLocaleStatsDO.builder()
-                .fullShortUrl(fullShortUrl)
-                .province(ipInfo.getProvince())
-                .gid(gid)
-                .date(nowDate)
-                .cnt(1)
-                .province(ipInfo.getProvince())
-                .city(ipInfo.getCity())
-                .adcode(ipInfo.getAdcode()) // 用城市名称作为临时的 adcode 占位
-                .country(ipInfo.getCountry())
-                .build();
-        linkLocaleStatsMapper.recordStatus(stats);
-        // 统计操作系统数据
-        String os = UserAgentExtractor.extractOs(request);
-        LinkOsStatsDO osStats = LinkOsStatsDO.builder()
-                .fullShortUrl(fullShortUrl)
-                .gid(gid)
-                .date(nowDate)
-                .cnt(1)
-                .os(os)
-                .build();
-        linkOsStatsMapper.recordStatus(osStats);
-        // 统计浏览器数据
-        String browser = UserAgentExtractor.extractBrowser(request);
-        LinkBrowserStatsDO browserStats = LinkBrowserStatsDO.builder()
-                .fullShortUrl(fullShortUrl)
-                .gid(gid)
-                .date(nowDate)
-                .cnt(1)
-                .browser(browser)
-                .build();
-        linkBrowserStatsMapper.recordStatus(browserStats);
-        // 统计设备数据
-        String device = UserAgentExtractor.extractDevice(request);
-        LinkDeviceStatsDO deviceStats = LinkDeviceStatsDO.builder()
-                .fullShortUrl(fullShortUrl)
-                .gid(gid)
-                .date(nowDate)
-                .cnt(1)
-                .device(device)
-                .build();
-        linkDeviceStatsMapper.recordStatus(deviceStats);
-        // 统计网络数据
-        String network = UserAgentExtractor.estimateNetwork(request); // 糊弄一下得了
-        LinkNetworkStatsDO networkStats = LinkNetworkStatsDO.builder()
-                .fullShortUrl(fullShortUrl)
-                .gid(gid)
-                .date(nowDate)
-                .cnt(1)
-                .network(network)
-                .build();
-        linkNetworkStatsMapper.recordStatus(networkStats);
-        // 记录访问日志
-        String locale = StrUtil.join("-", ipInfo.getCountry(), ipInfo.getProvince(), ipInfo.getCity());
-        LinkAccessLogsDO accessLog = LinkAccessLogsDO.builder()
-                .fullShortUrl(fullShortUrl)
-                .gid(gid)
-                .user(uvFlag)
-                .browser(browser)
-                .os(os)
-                .ip(ip)
-                .network(network)
-                .device(device)
-                .locale(locale)
-                .build();
-        linkAccessLogsMapper.insert(accessLog);
-        linkMapper.incrementStats(gid, fullShortUrl, 1, uvFirst ? 1 : 0, uipFirst ? 1 : 0);
-        LinkStatsTodayDO linkStatsTodayDO = LinkStatsTodayDO.builder()
-                .todayPv(1)
-                .todayUv(uvFirst ? 1 : 0)
-                .todayUip(uipFirst ? 1 : 0)
-                .fullShortUrl(fullShortUrl)
-                .gid(gid)
-                .date(nowDate)
-                .build();
-        linkStatsTodayMapper.recordStatus(linkStatsTodayDO);
+        return uvFlag;
     }
 
     /**

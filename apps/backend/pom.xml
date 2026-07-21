@@ -39,6 +39,7 @@
         <project.version>1.0-SNAPSHOT</project.version>
         <jsoup.version>1.17.2</jsoup.version>
         <ip2region.version>3.3.7</ip2region.version>
+        <rocketmq.spring.version>2.3.3</rocketmq.spring.version>
     </properties>
 
     <dependencies>
@@ -164,6 +165,12 @@
                 <groupId>org.lionsoul</groupId>
                 <artifactId>ip2region</artifactId>
                 <version>${ip2region.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq.spring.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
