@@ -161,7 +161,6 @@ public class LinkServiceImpl extends ServiceImpl<LinkMapper, LinkDO> implements 
     private void recordStats(String fullShortUrl, HttpServletRequest request, HttpServletResponse response) {
         String uvFlag = getOrCreateUvFlag(request, response);
         LinkStatsRecordMessage message = LinkStatsRecordMessage.builder()
-                .messageId(IdUtil.fastSimpleUUID())
                 .fullShortUrl(fullShortUrl)
                 .uvFlag(uvFlag)
                 .ip(JakartaServletUtil.getClientIP(request))

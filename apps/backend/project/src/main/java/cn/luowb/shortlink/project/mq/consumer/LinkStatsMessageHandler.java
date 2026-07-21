@@ -69,7 +69,7 @@ public class LinkStatsMessageHandler {
         LinkGotoDO gotoDO = linkGotoMapper.selectOne(com.baomidou.mybatisplus.core.toolkit.Wrappers.lambdaQuery(LinkGotoDO.class)
                 .eq(LinkGotoDO::getFullShortUrl, message.getFullShortUrl()));
         if (gotoDO == null) {
-            log.error("短链接不存在，无法消费访问统计消息，fullShortUrl={}，messageId={}", message.getFullShortUrl(), message.getMessageId());
+            log.error("短链接不存在，无法消费访问统计消息，fullShortUrl={}", message.getFullShortUrl());
             return;
         }
         String gid = gotoDO.getGid();

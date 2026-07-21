@@ -30,6 +30,10 @@ public enum RedisCacheKeyEnum {
      */
     LINK_ACCESS_STATS_UIP_KEY("short-link:stats:uip:%s:%s"),
     /**
+     * 消息队列消费幂等状态 Key
+     */
+    MESSAGE_QUEUE_IDEMPOTENT_KEY("short-link:mq:idempotent:%s"),
+    /**
      * 原始链接白名单启用状态 Key
      */
     ORIGIN_URL_WHITELIST_ENABLED_KEY("short-link:config:origin-url-whitelist:enabled"),
