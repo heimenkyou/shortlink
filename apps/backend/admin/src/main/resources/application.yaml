@@ -44,10 +44,12 @@ springdoc:
   # 默认展开参数
   default-flat-param-object: true
   swagger-ui:
+    enabled: false
     path: /swagger-ui.html
     tags-sorter: alpha
     operations-sorter: alpha
   api-docs:
+    enabled: false
     path: /v3/api-docs
   group-configs:
     - group: 'default'

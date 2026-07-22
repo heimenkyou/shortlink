@@ -1,0 +1,41 @@
+logging:
+  level:
+    cn.luowb.shortlink: debug
+    cn.luowb.shortlink.controller: debug
+    cn.luowb.shortlink.dao.mapper: debug
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+  web:
+    resources:
+      add-mappings: true
+  datasource:
+    url: jdbc:shardingsphere:classpath:shardingsphere-config-dev.yaml
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
+app:
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:2}
+  group:
+    max-count: 20
+  flow-risk-control:
+    window-seconds: 2
+    max-requests: 5
+  security:
+    whitelist:
+      enabled: false
+      manage-token: ${WHITELIST_MANAGE_TOKEN:}
+      domain-name-map:
+        localhost: 本地开发环境
+        127.0.0.1: 本机IP地址

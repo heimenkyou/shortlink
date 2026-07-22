@@ -1,0 +1,45 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+  web:
+    resources:
+      add-mappings: true
+
+knife4j:
+  gateway:
+    enabled: true
+    strategy: manual
+    routes:
+      - name: 后台管理
+        url: /api/short-link/admin/v3/api-docs
+        service-name: shortlink-admin
+        context-path: /
+        order: 1
+      - name: 中台服务
+        url: /api/short-link/v3/api-docs
+        service-name: shortlink-project
+        context-path: /
+        order: 2
+
+app:
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:2}
+  security:
+    white-path-list:
+      - /api/short-link/admin/v1/user/login
+      - /api/short-link/admin/v1/user/register
+      - /api/short-link/admin/v1/user/has-username
+      - /api/short-link/admin/v1/user/check-login
+      - /api/short-link/admin/v1/user/*
+      - /doc.html
+      - /favicon.ico
+      - /webjars/**
+      - /swagger-resources/**
+      - /v3/api-docs/**
+      - /api/short-link/admin/v3/api-docs
+      - /api/short-link/v3/api-docs

@@ -1,0 +1,44 @@
+logging:
+  level:
+    cn.luowb.shortlink: debug
+    cn.luowb.shortlink.controller: debug
+    cn.luowb.shortlink.dao.mapper: debug
+
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+  web:
+    resources:
+      add-mappings: true
+  datasource:
+    url: jdbc:shardingsphere:classpath:shardingsphere-config-dev.yaml
+
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
+rocketmq:
+  name-server: ${ROCKETMQ_NAME_SERVER:127.0.0.1:9876}
+  producer:
+    group: ${ROCKETMQ_PRODUCER_GROUP:shortlink-project-stats-producer}
+
+app:
+  mysql:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: ${DATABASE_HOST:127.0.0.1}
+    port: ${DATABASE_PORT:3306}
+    database: ${DATABASE_NAME:link}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:}
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:2}
+  mq:
+    consumer-group: ${ROCKETMQ_CONSUMER_GROUP:shortlink-project-stats-consumer}
+    link-stats-topic: ${ROCKETMQ_LINK_STATS_TOPIC:shortlink-link-stats-topic}

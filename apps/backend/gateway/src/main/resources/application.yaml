@@ -31,6 +31,10 @@ sa-token:
   token-name: Authorization
   active-timeout: 1800
 
+knife4j:
+  gateway:
+    enabled: false
+
 app:
   redis:
     host: ${REDIS_HOST:127.0.0.1}
