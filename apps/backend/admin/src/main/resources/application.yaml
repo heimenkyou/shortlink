@@ -55,13 +55,8 @@ springdoc:
       packages-to-scan: cn.luowb.shortlink.admin
 
 sa-token:
-  token-name: token
-  # 关闭同一账号并发登录
-  is-concurrent: false
-  # 顶人下线的范围（ALL_DEVICE_TYPE 表示所有设备端统统互斥）
-  replaced-range: ALL_DEVICE_TYPE
-  # 新旧设备冲突时的退出模式（OLD_DEVICE=旧设备下线，新设备成功；NEW_DEVICE=新设备登录失败，旧设备保持在线）
-  replaced-login-exit-mode: OLD_DEVICE
+  token-name: Authorization
+  active-timeout: 1800
 
 app:
   redis:

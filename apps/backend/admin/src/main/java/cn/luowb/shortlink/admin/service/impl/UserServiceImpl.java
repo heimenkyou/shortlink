@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import cn.luowb.shortlink.admin.common.biz.user.UserContext;
+import cn.luowb.shortlink.admin.common.biz.user.UserInfoDTO;
 import cn.luowb.shortlink.admin.dao.entity.UserDO;
 import cn.luowb.shortlink.admin.dao.mapper.UserMapper;
 import cn.luowb.shortlink.admin.dto.req.UserLoginReqDTO;
@@ -15,6 +16,7 @@ import cn.luowb.shortlink.admin.service.GroupService;
 import cn.luowb.shortlink.admin.service.UserService;
 import cn.luowb.shortlink.common.convention.ServiceException;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,10 +24,14 @@ import lombok.RequiredArgsConstructor;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.TimeUnit;
+
 import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.LOCK_USER_REGISTER_KEY;
+import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.USER_INFO_KEY;
 import static cn.luowb.shortlink.common.convention.result.errorcode.BaseErrorCode.USER_NAME_EXIST_ERROR;
 import static cn.luowb.shortlink.common.convention.result.errorcode.BaseErrorCode.USER_REGISTER_ERROR;
 
@@ -35,9 +41,12 @@ import static cn.luowb.shortlink.common.convention.result.errorcode.BaseErrorCod
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements UserService {
+    private static final long USER_CACHE_TIMEOUT_MINUTES = 30L;
+
     private final RBloomFilter<String> userRegisterCachePenetrationBloomFilter;
     private final RedissonClient redissonClient;
     private final GroupService groupService;
+    private final StringRedisTemplate stringRedisTemplate;
 
     /**
      * 根据用户名查询用户信息
@@ -103,6 +112,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (!this.update(BeanUtil.toBean(requestParam, UserDO.class), wrapper)) {
             throw new ClientException("更新失败");
         }
+        stringRedisTemplate.delete(USER_INFO_KEY.getKey(requestParam.getUsername()));
     }
 
     @Override
@@ -119,6 +129,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
         // 用户名为分片键，所以使用用户名作为登录ID
         StpUtil.login(userDO.getUsername());
+        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
+                .id(userDO.getId())
+                .username(userDO.getUsername())
+                .realName(userDO.getRealName())
+                .build();
+        stringRedisTemplate.opsForValue().set(
+                USER_INFO_KEY.getKey(userDO.getUsername()),
+                JSON.toJSONString(userInfoDTO),
+                USER_CACHE_TIMEOUT_MINUTES,
+                TimeUnit.MINUTES);
 
         String token = StpUtil.getTokenInfo().getTokenValue();
         return new UserLoginRespDTO(token);

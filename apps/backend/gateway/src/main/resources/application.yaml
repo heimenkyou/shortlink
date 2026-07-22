@@ -1,2 +1,46 @@
 server:
   port: 8000
+
+spring:
+  profiles:
+    active: prod
+  application:
+    name: shortlink-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+    gateway:
+      routes:
+        - id: shortlink-admin
+          uri: lb://shortlink-admin
+          predicates:
+            - Path=/api/short-link/admin/**
+        - id: shortlink-project
+          uri: lb://shortlink-project
+          predicates:
+            - Path=/api/short-link/**
+  data:
+    redis:
+      host: ${app.redis.host}
+      port: ${app.redis.port:6379}
+      password: ${app.redis.password}
+      database: ${app.redis.database:2}
+
+sa-token:
+  token-name: Authorization
+  active-timeout: 1800
+
+app:
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:2}
+  security:
+    white-path-list:
+      - /api/short-link/admin/v1/user/login
+      - /api/short-link/admin/v1/user/register
+      - /api/short-link/admin/v1/user/has-username
+      - /api/short-link/admin/v1/user/check-login
+      - /api/short-link/admin/v1/user/*
