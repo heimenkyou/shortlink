@@ -1,151 +1,82 @@
 package cn.luowb.shortlink.admin.remote.dto;
 
-import cn.hutool.http.HttpUtil;
 import cn.luowb.shortlink.admin.remote.dto.req.*;
 import cn.luowb.shortlink.admin.remote.dto.resp.*;
 import cn.luowb.shortlink.common.convention.result.Result;
-import cn.luowb.shortlink.common.convention.result.Results;
 import cn.luowb.shortlink.common.dto.PageResult;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.TypeReference;
-import jakarta.validation.Valid;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 短链接平台远程调用服务
  */
+@FeignClient(name = "${shortlink.project.service-name:shortlink-project}")
 public interface LinkRemoteService {
 
     /**
      * 创建短链接
      */
-    default Result<LinkCreateRespDTO> createShortLink(LinkCreateReqDTO requestParam) {
-        String resultPageJson = HttpUtil.post("http://localhost:8001/api/short-link/v1/create", JSON.toJSONString(requestParam));
-        return JSON.parseObject(resultPageJson, new TypeReference<>() {
-        });
-    }
+    @PostMapping("/api/short-link/v1/create")
+    Result<LinkCreateRespDTO> createShortLink(@RequestBody LinkCreateReqDTO requestParam);
 
     /**
      * 分页查询短链接
      */
-    default Result<PageResult<LinkPageRespDTO>> pageShortLink(LinkPageReqDTO requestParam) {
-        Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("gid", requestParam.getGid());
-        requestMap.put("current", requestParam.getCurrent());
-        requestMap.put("size", requestParam.getSize());
-        String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/page", requestMap);
-        return JSON.parseObject(resultPageJson, new TypeReference<>() {
-        });
-    }
+    @GetMapping("/api/short-link/v1/page")
+    Result<PageResult<LinkPageRespDTO>> pageShortLink(@SpringQueryMap LinkPageReqDTO requestParam);
 
 
     /**
      * 查询短链接分组下的短链接数量
      */
-    default Result<List<GroupCountQueryRespDTO>> groupShortLinkCount(List<String> gidList) {
-        Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("gidList", gidList);
-        String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/admin/v1/group/count", requestMap);
-        return JSON.parseObject(resultPageJson, new TypeReference<>() {
-        });
-    }
+    @GetMapping("/api/short-link/admin/v1/group/count")
+    Result<List<GroupCountQueryRespDTO>> groupShortLinkCount(@RequestParam("gidList") List<String> gidList);
 
-    /**
-     * 查询访问次数最高的 IP
-     *
-     * @return 高频访问 IP 列表
-     */
-    default Result<List<HighFrequencyIpRespDTO>> listHighFrequencyIp() {
-        String resultJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/high-frequency-ip");
-        return JSON.parseObject(resultJson, new TypeReference<>() {
-        });
-    }
+    @PostMapping("/api/short-link/v1/update")
+    Result<Void> updateShortLink(@RequestBody LinkUpdateReqDTO requestParam);
 
-    default Result<Void> updateShortLink(LinkUpdateReqDTO requestParam) {
-        HttpUtil.post("http://localhost:8001/api/short-link/v1/update", JSON.toJSONString(requestParam));
-        return Results.success(null);
-    }
-
-    default Result<WebsiteMetadataRespDTO> fetchMetadata(String url) {
-        String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/metadata", Map.of("url", url));
-        return JSON.parseObject(resultPageJson, new TypeReference<>() {
-        });
-    }
+    @GetMapping("/api/short-link/v1/metadata")
+    Result<WebsiteMetadataRespDTO> fetchMetadata(@RequestParam("url") String url);
 
     /**
      * 查询单个短链接监控数据
      */
-    default Result<ShortLinkStatsRespDTO> shortLinkStats(ShortLinkStatsReqDTO requestParam) {
-        Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("fullShortUrl", requestParam.getFullShortUrl());
-        requestMap.put("gid", requestParam.getGid());
-        requestMap.put("startDate", requestParam.getStartDate());
-        requestMap.put("endDate", requestParam.getEndDate());
-        requestMap.put("enableStatus", requestParam.getEnableStatus());
-        String resultJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/stats", requestMap);
-        return JSON.parseObject(resultJson, new TypeReference<>() {
-        });
-    }
+    @GetMapping("/api/short-link/v1/stats")
+    Result<ShortLinkStatsRespDTO> shortLinkStats(@SpringQueryMap ShortLinkStatsReqDTO requestParam);
 
     /**
      * 查询分组短链接监控数据
      */
-    default Result<ShortLinkStatsRespDTO> groupShortLinkStats(ShortLinkGroupStatsReqDTO requestParam) {
-        Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("gid", requestParam.getGid());
-        requestMap.put("startDate", requestParam.getStartDate());
-        requestMap.put("endDate", requestParam.getEndDate());
-        String resultJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/stats/group", requestMap);
-        return JSON.parseObject(resultJson, new TypeReference<>() {
-        });
-    }
+    @GetMapping("/api/short-link/v1/stats/group")
+    Result<ShortLinkStatsRespDTO> groupShortLinkStats(@SpringQueryMap ShortLinkGroupStatsReqDTO requestParam);
 
     /**
      * 查询单个短链接访问记录监控数据
      */
-    default Result<PageResult<ShortLinkStatsAccessRecordRespDTO>> shortLinkStatsAccessRecord(ShortLinkStatsAccessRecordReqDTO requestParam) {
-        Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("fullShortUrl", requestParam.getFullShortUrl());
-        requestMap.put("gid", requestParam.getGid());
-        requestMap.put("startDate", requestParam.getStartDate());
-        requestMap.put("endDate", requestParam.getEndDate());
-        requestMap.put("enableStatus", requestParam.getEnableStatus());
-        requestMap.put("current", requestParam.getCurrent());
-        requestMap.put("size", requestParam.getSize());
-        String resultJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/stats/access-record", requestMap);
-        return JSON.parseObject(resultJson, new TypeReference<>() {
-        });
-    }
+    @GetMapping("/api/short-link/v1/stats/access-record")
+    Result<PageResult<ShortLinkStatsAccessRecordRespDTO>> shortLinkStatsAccessRecord(
+            @SpringQueryMap ShortLinkStatsAccessRecordReqDTO requestParam);
 
     /**
      * 查询分组短链接访问记录监控数据
      */
-    default Result<PageResult<ShortLinkStatsAccessRecordRespDTO>> groupShortLinkStatsAccessRecord(ShortLinkGroupStatsAccessRecordReqDTO requestParam) {
-        Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("gid", requestParam.getGid());
-        requestMap.put("startDate", requestParam.getStartDate());
-        requestMap.put("endDate", requestParam.getEndDate());
-        requestMap.put("current", requestParam.getCurrent());
-        requestMap.put("size", requestParam.getSize());
-        String resultJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/stats/access-record/group", requestMap);
-        return JSON.parseObject(resultJson, new TypeReference<>() {
-        });
-    }
+    @GetMapping("/api/short-link/v1/stats/access-record/group")
+    Result<PageResult<ShortLinkStatsAccessRecordRespDTO>> groupShortLinkStatsAccessRecord(
+            @SpringQueryMap ShortLinkGroupStatsAccessRecordReqDTO requestParam);
 
     /**
      * 将链接移动到回收站
      *
      * @param requestParam 将链接移动到回收站请求参数
      */
-    default Result<Void> saveTrash(TrashSaveReqDTO requestParam) {
-        String resultPageJson = HttpUtil.post("http://localhost:8001/api/short-link/v1/trash/save", JSON.toJSONString(requestParam));
-        return JSON.parseObject(resultPageJson, new TypeReference<>() {
-        });
-    }
+    @PostMapping("/api/short-link/v1/trash/save")
+    Result<Void> saveTrash(@RequestBody TrashSaveReqDTO requestParam);
 
     /**
      * 分页查询短链接
@@ -153,15 +84,8 @@ public interface LinkRemoteService {
      * @param requestParam 分页查询短链接请求参数
      * @return 分页查询短链接响应
      */
-    default Result<PageResult<LinkPageRespDTO>> pageTrashLink(@Valid @MonotonicNonNull TrashLinkPageReqDTO requestParam) {
-        Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("current", requestParam.getCurrent());
-        requestMap.put("size", requestParam.getSize());
-        requestMap.put("gidList", requestParam.getGidList());
-        String resultPageJson = HttpUtil.get("http://localhost:8001/api/short-link/v1/trash/page", requestMap);
-        return JSON.parseObject(resultPageJson, new TypeReference<>() {
-        });
-    }
+    @GetMapping("/api/short-link/v1/trash/page")
+    Result<PageResult<LinkPageRespDTO>> pageTrashLink(@SpringQueryMap TrashLinkPageReqDTO requestParam);
 
     /**
      * 从回收站中恢复链接
@@ -169,18 +93,14 @@ public interface LinkRemoteService {
      * @param requestParam 从回收站中恢复链接请求参数
      * @return 从回收站中恢复链接响应
      */
-    default Result<Void> recoverTrash(TrashRecoverReqDTO requestParam) {
-        String resultPageJson = HttpUtil.post("http://localhost:8001/api/short-link/v1/trash/recover", JSON.toJSONString(requestParam));
-        return JSON.parseObject(resultPageJson, new TypeReference<>() {
-        });
-    }
+    @PostMapping("/api/short-link/v1/trash/recover")
+    Result<Void> recoverTrash(@RequestBody TrashRecoverReqDTO requestParam);
 
     /**
      * 从回收站删除链接
      *
      * @param requestParam 从回收站删除链接请求参数
      */
-    default void deleteTrash(TrashDeleteReqDTO requestParam) {
-        HttpUtil.post("http://localhost:8001/api/short-link/v1/trash/delete", JSON.toJSONString(requestParam));
-    }
+    @PostMapping("/api/short-link/v1/trash/delete")
+    Result<Void> deleteTrash(@RequestBody TrashDeleteReqDTO requestParam);
 }

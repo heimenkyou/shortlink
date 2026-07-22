@@ -26,9 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "后管回收站管理")
 public class TrashController {
-    // TODO 以后再改成 feign 调用
-    LinkRemoteService linkRemoteService = new LinkRemoteService() {
-    };
+    private final LinkRemoteService linkRemoteService;
     private final TrashService trashService;
 
     /**

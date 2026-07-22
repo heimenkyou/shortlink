@@ -35,9 +35,7 @@ import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.GROUP_CREATE_
 @RequiredArgsConstructor
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
     private final RedissonClient redissonClient;
-    // TODO 以后再改成 feign 调用
-    LinkRemoteService linkRemoteService = new LinkRemoteService() {
-    };
+    private final LinkRemoteService linkRemoteService;
 
     @Value("${app.group.max-count:20}")
     private int maxGroupCount;

@@ -22,9 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TrashServiceImpl implements TrashService {
     private final GroupMapper groupMapper;
-    // TODO 以后再改成 feign 调用
-    LinkRemoteService linkRemoteService = new LinkRemoteService() {
-    };
+    private final LinkRemoteService linkRemoteService;
 
     /**
      * 根据当前用户拥有的分组，分页查询回收站链接

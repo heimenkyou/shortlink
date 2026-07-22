@@ -11,6 +11,7 @@ import cn.luowb.shortlink.common.convention.result.Result;
 import cn.luowb.shortlink.common.dto.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,12 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
  * 短链接监控后管控制器
  */
 @RestController
+@RequiredArgsConstructor
 @Tag(name = "短链接监控后管管理")
 public class ShortLinkStatsController {
 
-    // TODO 以后再改成 feign 调用
-    LinkRemoteService linkRemoteService = new LinkRemoteService() {
-    };
+    private final LinkRemoteService linkRemoteService;
 
     /**
      * 查询单个短链接监控数据

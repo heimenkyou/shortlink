@@ -5,9 +5,11 @@ import jakarta.validation.constraints.NegativeOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @NegativeOrZero
 public class WebsiteMetadataRespDTO {
@@ -21,5 +23,5 @@ public class WebsiteMetadataRespDTO {
      * 网站图标URL
      */
     @Schema(description = "网站图标URL")
-    private String iconUrl;
+    private String favicon;
 }
