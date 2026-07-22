@@ -35,7 +35,7 @@ public interface LinkRemoteService {
     /**
      * 查询短链接分组下的短链接数量
      */
-    @GetMapping("/api/short-link/admin/v1/group/count")
+    @GetMapping("/api/short-link/v1/group/count")
     Result<List<GroupCountQueryRespDTO>> groupShortLinkCount(@RequestParam("gidList") List<String> gidList);
 
     @PostMapping("/api/short-link/v1/update")
