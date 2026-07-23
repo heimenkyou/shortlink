@@ -6,13 +6,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 布隆过滤器配置
+ * 项目端布隆过滤器配置。
  */
 @Configuration
 public class RBloomFilterConfiguration {
 
     /**
-     * 防止短链接创建查询数据库的布隆过滤器
+     * 创建短链接布隆过滤器。
+     *
+     * @param redissonClient Redisson 客户端
+     * @return 短链接布隆过滤器
      */
     @Bean
     public RBloomFilter<String> shortUriCreateCachePenetrationBloomFilter(RedissonClient redissonClient) {

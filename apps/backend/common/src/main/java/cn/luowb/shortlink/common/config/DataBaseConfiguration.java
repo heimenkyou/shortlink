@@ -1,19 +1,19 @@
-package cn.luowb.shortlink.project.config;
+package cn.luowb.shortlink.common.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.apache.ibatis.reflection.MetaObject;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDateTime;
 
 /**
  * 数据库持久层配置类｜配置 MyBatis-Plus 相关分页插件等
  */
-@Configuration
+@AutoConfiguration
 public class DataBaseConfiguration {
 
     /**

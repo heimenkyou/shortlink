@@ -1,11 +1,11 @@
 package cn.luowb.shortlink.admin.common.biz.user;
 
 import cn.luowb.shortlink.admin.config.UserFlowRiskControlProperties;
+import cn.luowb.shortlink.common.biz.user.UserContext;
 import cn.luowb.shortlink.common.convention.exception.ClientException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -17,7 +17,7 @@ import java.util.Collections;
 import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.USER_FLOW_RISK_CONTROL_KEY;
 
 /**
- * 用户请求频控拦截器
+ * 管理端用户请求频控拦截器。
  */
 @Component
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class UserFlowRiskControlInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String username = UserContext.getUsername();
         Long accessCount = stringRedisTemplate.execute(
                 USER_FLOW_RISK_CONTROL_SCRIPT,

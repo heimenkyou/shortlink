@@ -1,4 +1,4 @@
-package cn.luowb.shortlink.project.common.web;
+package cn.luowb.shortlink.common.web;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.hutool.core.collection.CollectionUtil;
@@ -11,9 +11,10 @@ import cn.luowb.shortlink.common.convention.result.errorcode.BaseErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,9 +22,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Optional;
 
 /**
- * 全局异常处理器｜拦截指定异常并通过优雅构建方式返回前端信息
+ * 处理控制器抛出的异常，并返回标准响应。
  */
 @Slf4j
+@AutoConfiguration
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -78,7 +80,7 @@ public class GlobalExceptionHandler {
     }
 
     private String getUrl(HttpServletRequest request) {
-        if (StringUtils.isBlank(request.getQueryString())) {
+        if (!StringUtils.hasText(request.getQueryString())) {
             return request.getRequestURL().toString();
         }
         return request.getRequestURL().toString() + "?" + request.getQueryString();

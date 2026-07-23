@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * 用户请求频控配置
+ * 管理端用户频控配置。
  */
 @Data
 @Component
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
 public class UserFlowRiskControlProperties {
 
     /**
-     * 频控时间窗口，单位秒
+     * 频控时间窗口，单位秒。
      */
     private int windowSeconds;
 
     /**
-     * 时间窗口内允许的最大请求次数
+     * 时间窗口内允许的最大请求次数。
      */
     private int maxRequests;
 }

@@ -35,7 +35,7 @@
         <guava.version>30.0-jre</guava.version>
         <knife4j.version>4.5.0</knife4j.version>
         <spotless.version>2.46.1</spotless.version>
-        <sa-token.version>1.45.0</sa-token.version>
+        <sa-token.version>1.44.0</sa-token.version>
         <project.version>1.0-SNAPSHOT</project.version>
         <jsoup.version>1.17.2</jsoup.version>
         <ip2region.version>3.3.7</ip2region.version>

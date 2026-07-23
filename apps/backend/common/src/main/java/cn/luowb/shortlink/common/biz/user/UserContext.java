@@ -1,5 +1,4 @@
-package cn.luowb.shortlink.admin.common.biz.user;
-
+package cn.luowb.shortlink.common.biz.user;
 import com.alibaba.ttl.TransmittableThreadLocal;
 
 import java.util.Optional;
@@ -49,5 +48,8 @@ public final class UserContext {
      */
     public static void removeUser() {
         USER_THREAD_LOCAL.remove();
+    }
+
+    private UserContext() {
     }
 }

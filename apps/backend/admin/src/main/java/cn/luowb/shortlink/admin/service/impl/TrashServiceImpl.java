@@ -1,7 +1,7 @@
 package cn.luowb.shortlink.admin.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.luowb.shortlink.admin.common.biz.user.UserContext;
+import cn.luowb.shortlink.common.biz.user.UserContext;
 import cn.luowb.shortlink.admin.dao.entity.GroupDO;
 import cn.luowb.shortlink.admin.dao.mapper.GroupMapper;
 import cn.luowb.shortlink.admin.remote.dto.LinkRemoteService;

@@ -1,4 +1,4 @@
-package cn.luowb.shortlink.admin.common.biz.user;
+package cn.luowb.shortlink.common.biz.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
