@@ -5,12 +5,12 @@ spring:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
     gateway:
       routes:
-        - id: shortlink-admin
-          uri: lb://shortlink-admin
+        - id: shortlink-aggregation-admin
+          uri: lb://shortlink-aggregation
           predicates:
             - Path=/api/short-link/admin/**
-        - id: shortlink-project
-          uri: lb://shortlink-project
+        - id: shortlink-aggregation-project
+          uri: lb://shortlink-aggregation
           predicates:
             - Path=/api/short-link/**
   web:
@@ -24,21 +24,16 @@ knife4j:
     routes:
       - name: 后台管理
         url: /api/short-link/admin/v3/api-docs
-        service-name: shortlink-admin
+        service-name: shortlink-aggregation
         context-path: /
         order: 1
       - name: 中台服务
         url: /api/short-link/v3/api-docs
-        service-name: shortlink-project
+        service-name: shortlink-aggregation
         context-path: /
         order: 2
 
 app:
-  redis:
-    host: ${REDIS_HOST:127.0.0.1}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:}
-    database: ${REDIS_DATABASE:2}
   security:
     white-path-list:
       - /api/short-link/admin/v1/user/login

@@ -1,0 +1,143 @@
+server:
+  port: 8003
+
+spring:
+  profiles:
+    active: prod
+  application:
+    name: shortlink-aggregation
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
+    openfeign:
+      client:
+        config:
+          shortlink-project:
+            # 聚合部署时，管理端通过本机 HTTP 调用同一进程中的项目端接口
+            url: http://127.0.0.1:${server.port}
+  datasource:
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    url: jdbc:shardingsphere:classpath:shardingsphere-aggregation.yaml
+    hikari:
+      connection-test-query: select 1
+      connection-timeout: 20000
+      idle-timeout: 300000
+      maximum-pool-size: 5
+      minimum-idle: 5
+  data:
+    redis:
+      host: ${app.redis.host}
+      port: ${app.redis.port:6379}
+      password: ${app.redis.password}
+      database: ${app.redis.database:2}
+  web:
+    resources:
+      add-mappings: false
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 500MB
+
+rocketmq:
+  name-server: ${ROCKETMQ_NAME_SERVER:localhost:9876}
+  producer:
+    group: ${ROCKETMQ_PRODUCER_GROUP:shortlink-project-stats-producer}
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+springdoc:
+  default-flat-param-object: true
+  swagger-ui:
+    enabled: false
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    enabled: false
+    path: /v3/api-docs
+  group-configs:
+    - group: default
+      paths-to-match: '/**'
+      packages-to-scan:
+        - cn.luowb.shortlink.admin
+        - cn.luowb.shortlink.project
+
+sa-token:
+  token-name: Authorization
+  active-timeout: 1800
+
+app:
+  mysql:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: ${DATABASE_HOST:127.0.0.1}
+    port: ${DATABASE_PORT:3306}
+    database: ${DATABASE_NAME:link}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:}
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:2}
+  group:
+    max-count: 20
+  flow-risk-control:
+    window-seconds: 1
+    max-requests: 20
+  mq:
+    consumer-group: ${ROCKETMQ_CONSUMER_GROUP:shortlink-project-stats-consumer}
+    link-stats-topic: ${ROCKETMQ_LINK_STATS_TOPIC:shortlink-link-stats-topic}
+  security:
+    whitelist:
+      enabled: true
+      manage-token: ${WHITELIST_MANAGE_TOKEN:}
+      domain-name-map:
+        "[*.luowb.cn]": "罗文彬的个人站"
+        github.com: "全球最大开源社区(GitHub)"
+        gitee.com: "国内代码托管平台(Gitee)"
+        csdn.net: "CSDN 技术博客"
+        blog.csdn.net: "CSDN 博客"
+        juejin.cn: "稀土掘金技术社区"
+        zhihu.com: "知乎专栏"
+        oschina.net: "开源中国社区"
+        segmentfault.com: "思否技术问答"
+        leetcode.cn: "力扣刷题站"
+        spring.io: "Spring 官方文档"
+        docs.oracle.com: "Oracle 官方文档"
+        apache.org: "Apache 开源基金会"
+        bilibili.com: "B站 哔哩哔哩"
+        "[*.bilibili.com]": "B站子域名"
+        iqiyi.com: "爱奇艺视频"
+        youku.com: "优酷视频"
+        douyin.com: "抖音短视频"
+        kuaishou.com: "快手短视频"
+        weibo.com: "新浪微博"
+        "[*.weibo.com]": "微博子域名"
+        qq.com: "腾讯网"
+        "[*.qq.com]": "QQ/腾讯子域"
+        weixin.qq.com: "微信公众平台"
+        t.qq.com: "腾讯微博(备用)"
+        taobao.com: "淘宝网"
+        "[*.taobao.com]": "淘宝子域名"
+        tmall.com: "天猫商城"
+        jd.com: "京东商城"
+        "[*.jd.com]": "京东子域名"
+        pinduoduo.com: "拼多多"
+        xiaomi.com: "小米商城"
+        "[*.xiaomi.com]": "小米子域"
+        baidu.com: "百度搜索引擎"
+        "[*.baidu.com]": "百度子域名"
+        sina.com.cn: "新浪门户"
+        sohu.com: "搜狐门户"
+        163.com: "网易"
+        people.com.cn: "人民网"
+        xinhuanet.com: "新华网"
+        yuque.com: "语雀文档"
+        docs.qq.com: "腾讯文档"
+        feishu.cn: "飞书办公套件"
+        "[*.gov.cn]": "中国政府网"
+        "[*.edu.cn]": "中国教育网"

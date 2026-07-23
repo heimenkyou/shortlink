@@ -9,6 +9,11 @@ import java.util.Optional;
 public final class UserContext {
 
     /**
+     * Sa-Token Session 中的用户信息属性名。
+     */
+    public static final String USER_INFO_SESSION_KEY = "USER_INFO";
+
+    /**
      * <a href="https://github.com/alibaba/transmittable-thread-local" />
      */
     private static final ThreadLocal<UserInfoDTO> USER_THREAD_LOCAL = new TransmittableThreadLocal<>();

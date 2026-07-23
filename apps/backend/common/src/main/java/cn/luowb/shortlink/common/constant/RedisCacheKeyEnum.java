@@ -8,10 +8,6 @@ public enum RedisCacheKeyEnum {
     USER_SESSION_KEY("short-link:user:session:%s"),
     SESSION_USER_KEY("short-link:session:%s"),
     /**
-     * 用户信息缓存 Key
-     */
-    USER_INFO_KEY("short-link:user:info:%s"),
-    /**
      * 短链接分组创建锁前缀 Key
      */
     GROUP_CREATE_LOCK_KEY("short-link:lock_group:create:%s"),

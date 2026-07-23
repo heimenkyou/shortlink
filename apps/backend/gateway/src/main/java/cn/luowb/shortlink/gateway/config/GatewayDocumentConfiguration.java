@@ -7,9 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 /**
- * 开发环境文档路由配置
+ * 文档路由配置
  */
-@Profile("dev")
 @Configuration
 public class GatewayDocumentConfiguration {
 
@@ -20,6 +19,7 @@ public class GatewayDocumentConfiguration {
      * @return 开发环境文档路由
      */
     @Bean
+    @Profile("dev")
     public RouteLocator documentRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("shortlink-admin-docs", route -> route
@@ -32,6 +32,29 @@ public class GatewayDocumentConfiguration {
                         .path("/api/short-link/v3/api-docs")
                         .filters(filter -> filter.setPath("/v3/api-docs"))
                         .uri("lb://shortlink-project"))
+                .build();
+    }
+
+    /**
+     * 将聚合部署的文档请求转发到聚合服务。
+     *
+     * @param builder 路由构建器
+     * @return 聚合部署文档路由
+     */
+    @Bean
+    @Profile("aggregation")
+    public RouteLocator aggregationDocumentRouteLocator(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route("shortlink-aggregation-admin-docs", route -> route
+                        .order(-1)
+                        .path("/api/short-link/admin/v3/api-docs")
+                        .filters(filter -> filter.setPath("/v3/api-docs"))
+                        .uri("lb://shortlink-aggregation"))
+                .route("shortlink-aggregation-project-docs", route -> route
+                        .order(-1)
+                        .path("/api/short-link/v3/api-docs")
+                        .filters(filter -> filter.setPath("/v3/api-docs"))
+                        .uri("lb://shortlink-aggregation"))
                 .build();
     }
 }

@@ -1,13 +1,16 @@
 package cn.luowb.shortlink.gateway.config;
 
 import cn.dev33.satoken.context.SaHolder;
+import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.reactor.context.SaReactorSyncHolder;
 import cn.dev33.satoken.reactor.filter.SaReactorFilter;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.luowb.shortlink.gateway.filter.TokenValidateFilter;
+import cn.luowb.shortlink.gateway.filter.UserInfoTransmitFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
 
 /**
  * 网关 Sa-Token 配置
@@ -32,8 +35,12 @@ public class SaTokenConfiguration {
                 .setExcludeList(config.getWhitePathList())
                 .setAuth(ignored -> {
                     StpUtil.checkLogin();
+                    Object sessionUserInfo = StpUtil.getSession().get("USER_INFO");
+                    if (!(sessionUserInfo instanceof Map<?, ?> userInfo)) {
+                        throw new SaTokenException("登录会话缺少用户信息");
+                    }
                     SaReactorSyncHolder.getExchange().getAttributes().put(
-                            TokenValidateFilter.USER_ATTRIBUTE, StpUtil.getLoginIdAsString());
+                            UserInfoTransmitFilter.USER_ATTRIBUTE, userInfo);
                 })
                 .setError(error -> {
                     SaHolder.getResponse()

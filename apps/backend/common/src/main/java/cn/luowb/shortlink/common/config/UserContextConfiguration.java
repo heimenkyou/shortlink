@@ -1,11 +1,9 @@
 package cn.luowb.shortlink.common.config;
 
 import cn.luowb.shortlink.common.biz.user.UserContextInterceptor;
-import cn.luowb.shortlink.common.biz.user.UserInfoQueryService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -13,22 +11,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * 用户上下文拦截器配置。
  */
 @AutoConfiguration
-@ConditionalOnBean(UserInfoQueryService.class)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class UserContextConfiguration {
 
     /**
      * 创建用户上下文拦截器。
      *
-     * @param userInfoQueryService 用户查询服务
-     * @param stringRedisTemplate Redis 客户端
      * @return 用户上下文拦截器
      */
     @Bean
-    public UserContextInterceptor userContextInterceptor(
-            UserInfoQueryService userInfoQueryService,
-            StringRedisTemplate stringRedisTemplate
-    ) {
-        return new UserContextInterceptor(userInfoQueryService, stringRedisTemplate);
+    public UserContextInterceptor userContextInterceptor() {
+        return new UserContextInterceptor();
     }
 
     /**

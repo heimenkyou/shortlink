@@ -10,16 +10,6 @@ spring:
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
-    gateway:
-      routes:
-        - id: shortlink-admin
-          uri: lb://shortlink-admin
-          predicates:
-            - Path=/api/short-link/admin/**
-        - id: shortlink-project
-          uri: lb://shortlink-project
-          predicates:
-            - Path=/api/short-link/**
   data:
     redis:
       host: ${app.redis.host}
