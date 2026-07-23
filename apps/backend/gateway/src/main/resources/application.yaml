@@ -4,6 +4,8 @@ server:
 spring:
   profiles:
     active: prod
+    group:
+      aggregation-dev: aggregation
   application:
     name: shortlink-gateway
   cloud:
@@ -37,4 +39,3 @@ app:
       - /api/short-link/admin/v1/user/register
       - /api/short-link/admin/v1/user/has-username
       - /api/short-link/admin/v1/user/check-login
-      - /api/short-link/admin/v1/user/*

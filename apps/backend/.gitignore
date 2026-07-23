@@ -19,5 +19,6 @@ replay_pid*
 
 
 application-dev.yaml
+application-aggregation-dev.yaml
 shardingsphere-config-dev.yaml
 shardingsphere-aggregation-dev.yaml

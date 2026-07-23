@@ -40,7 +40,6 @@ app:
       - /api/short-link/admin/v1/user/register
       - /api/short-link/admin/v1/user/has-username
       - /api/short-link/admin/v1/user/check-login
-      - /api/short-link/admin/v1/user/*
       - /doc.html
       - /favicon.ico
       - /webjars/**
