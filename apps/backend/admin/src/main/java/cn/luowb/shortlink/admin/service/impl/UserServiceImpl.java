@@ -4,7 +4,6 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import cn.luowb.shortlink.common.biz.user.UserContext;
-import cn.luowb.shortlink.common.biz.user.UserInfoDTO;
 import cn.luowb.shortlink.admin.dao.entity.UserDO;
 import cn.luowb.shortlink.admin.dao.mapper.UserMapper;
 import cn.luowb.shortlink.admin.dto.req.UserLoginReqDTO;
@@ -25,6 +24,9 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static cn.luowb.shortlink.common.biz.user.UserContext.USER_INFO_SESSION_KEY;
 import static cn.luowb.shortlink.common.constant.RedisCacheKeyEnum.LOCK_USER_REGISTER_KEY;
@@ -105,12 +107,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
         if (!this.update(BeanUtil.toBean(requestParam, UserDO.class), wrapper)) {
             throw new ClientException("更新失败");
         }
-        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
-                .id(loginUserId)
-                .username(requestParam.getUsername())
-                .realName(requestParam.getRealName())
-                .build();
-        StpUtil.getSession().set(USER_INFO_SESSION_KEY, userInfoDTO);
+        StpUtil.getSession().set(
+                USER_INFO_SESSION_KEY,
+                buildSessionUserInfo(loginUserId, requestParam.getUsername(), requestParam.getRealName())
+        );
     }
 
     @Override
@@ -127,12 +127,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
 
         // 用户名为分片键，所以使用用户名作为登录ID
         StpUtil.login(userDO.getUsername());
-        UserInfoDTO userInfoDTO = UserInfoDTO.builder()
-                .id(userDO.getId())
-                .username(userDO.getUsername())
-                .realName(userDO.getRealName())
-                .build();
-        StpUtil.getSession().set(USER_INFO_SESSION_KEY, userInfoDTO);
+        StpUtil.getSession().set(
+                USER_INFO_SESSION_KEY,
+                buildSessionUserInfo(userDO.getId(), userDO.getUsername(), userDO.getRealName())
+        );
 
         String token = StpUtil.getTokenInfo().getTokenValue();
         return new UserLoginRespDTO(token);
@@ -150,5 +148,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserDO> implements 
             throw new ClientException("用户未登录");
         }
         StpUtil.logout(loginUserId);
+    }
+
+    private Map<String, Object> buildSessionUserInfo(Long id, String username, String realName) {
+        // 使用通用结构，避免网关反序列化 Session 时依赖业务 DTO。
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("id", id);
+        userInfo.put("username", username);
+        userInfo.put("realName", realName);
+        return userInfo;
     }
 }

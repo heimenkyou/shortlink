@@ -47,6 +47,15 @@ public final class UserContext {
         return Optional.ofNullable(userInfoDTO).map(UserInfoDTO::getUsername).orElse(null);
     }
 
+    /**
+     * 获取上下文中用户真实姓名。
+     *
+     * @return 用户真实姓名
+     */
+    public static String getRealName() {
+        UserInfoDTO userInfoDTO = USER_THREAD_LOCAL.get();
+        return Optional.ofNullable(userInfoDTO).map(UserInfoDTO::getRealName).orElse(null);
+    }
 
     /**
      * 清理用户上下文
